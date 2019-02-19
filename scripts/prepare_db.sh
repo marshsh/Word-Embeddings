@@ -75,18 +75,6 @@ while [ "$1" != "" ]; do
 done    
 
 
-echo "Checking variables status."
-echo
-echo
-if ! -f $THIRDPARTYPATH/glove.6B.2.zip ; then
-    echo "si en el if"
-fi
-echo $GLOVE && [ ! -f $THIRDPARTYPATH/glove.6B.2.zip ]
-echo
-echo
-echo
-
-
 #####################################
 #   Stop Words
 
