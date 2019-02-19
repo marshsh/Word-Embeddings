@@ -44,19 +44,19 @@ while [ "$1" != "" ]; do
 
 
         smh | todosM )
-            echo "Argument includes corpus wikipedia"
+            echo "Argument includes smh embbedings"
             SMH=true
             ;;
         CTXT | ctxt | context | todosM )
-            echo "Argument includes corpus wikipedia"
+            echo "Argument includes context embbedings"
             CTXT=true
             ;;
         w2v | word2vec | word | todosM )
-            echo "Argument includes corpus wikipedia"
+            echo "Argument includes word2vec embbedings"
             W2V=true
             ;;
         glove | todosM )
-            echo "Argument includes corpus wikipedia"
+            echo "Argument includes glove embbedings"
             GLOVE=true
             ;;
 
@@ -75,12 +75,22 @@ while [ "$1" != "" ]; do
 done    
 
 
+echo "Checking variables status."
+echo
+echo
+if ! -f $THIRDPARTYPATH/glove.6B.2.zip ; then
+    echo "si en el if"
+fi
+echo $GLOVE && [ ! -f $THIRDPARTYPATH/glove.6B.2.zip ]
+echo
+echo
+echo
 
 
 #####################################
 #   Stop Words
 
-if [ ! -f $DATAPATH/stopwords_english.txt ]; then
+if ! -f $DATAPATH/stopwords_english.txt ; then
     echo "Downloading stopwords"
     wget -qO- -O $DATAPATH/stopwords_english.txt \
          https://raw.githubusercontent.com/pan-webis-de/authorid/master/data/stopwords_english.txt
@@ -92,7 +102,8 @@ fi
 #   Preloaded Encoders
 
 
-if [$GLOVE] && [ ! -f $THIRDPARTYPATH/glove.6B.2.zip ]; then
+if $GLOVE && ! -f $THIRDPARTYPATH/glove.6B.2.zip ; then
+    mkdir $THIRDPARTYPATH
     echo "Downloading pre-trained Glove word embeddings from Stanford s website."
     wget  -O $GLOVENAME "http://nlp.stanford.edu/data/glove.6B.zip"
     unzip $GLOVENAME
@@ -117,7 +128,7 @@ fi
 
 #   20NG and SMH
 
-if [ $TWENTYNG ] && [ $SMH ]; then
+if $SMH && $TWENTYNG ; then
     echo
     echo
     echo "SMH 20NG "
@@ -141,9 +152,17 @@ if [ $TWENTYNG ] && [ $SMH ]; then
 fi
 
 
-if [ $TWENTYNG ] && [ $GLOVE ]; then
-    
+if $TWENTYNG && $GLOVE ; then
+    echo
+    echo
+    echo "20NG with glove embbedings"
+    echo
+    echo
+    python python/corpus/20ng2glove.py
 
+    echo "Finished training model."
+
+fi
 
 
 
