@@ -75,10 +75,22 @@ while [ "$1" != "" ]; do
 done    
 
 
+echo "Checking variables status."
+echo
+echo
+if [ ! -f $THIRDPARTYPATH/glove.6B.zip ] ; then
+    echo "si en el if"
+fi
+echo $GLOVE && [ ! -f $THIRDPARTYPATH/glove.6B.zip ]
+echo
+echo
+echo
+
+
 #####################################
 #   Stop Words
 
-if ! -f $DATAPATH/stopwords_english.txt ; then
+if [ ! -f $DATAPATH/stopwords_english.txt ] ; then
     echo "Downloading stopwords"
     wget -qO- -O $DATAPATH/stopwords_english.txt \
          https://raw.githubusercontent.com/pan-webis-de/authorid/master/data/stopwords_english.txt
@@ -90,11 +102,17 @@ fi
 #   Preloaded Encoders
 
 
-if $GLOVE && ! -f $THIRDPARTYPATH/glove.6B.2.zip ; then
-    mkdir $THIRDPARTYPATH
+if $GLOVE && [ ! -f $THIRDPARTYPATH/glove.6B.zip ] ; then
+    if [ ! -f $THIRDPARTYPATH ] ; then
+        mkdir $THIRDPARTYPATH
+        echo "En el if mal"
+    fi
+
     echo "Downloading pre-trained Glove word embeddings from Stanford s website."
     wget  -O $GLOVENAME "http://nlp.stanford.edu/data/glove.6B.zip"
-    unzip $GLOVENAME
+    mkdir $THIRDPARTYPATH/glove.6B.2
+    unzip -d $THIRDPARTYPATH/glove.6B.2/ $GLOVENAME
+    # unzip -d `pwd`/glove.6B.2/ glove.6B.50d.zip
     echo "Glove unziped."
 fi
 
@@ -109,7 +127,7 @@ fi
 #   Download and process specified corpuses
 
 
-if $TWENTYNG; then
+if $TWENTYNG ; then
     mkdir -p $DATAPATH/20newsgroups
 fi
 
@@ -146,7 +164,7 @@ if $TWENTYNG && $GLOVE ; then
     echo "20NG with glove embbedings"
     echo
     echo
-    python python/corpus/20ng2glove.py
+    python python/corpus/20ng2glove.py glove
 
     echo "Finished training model."
 

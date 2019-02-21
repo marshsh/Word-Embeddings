@@ -71,20 +71,19 @@ def gloveEmbbedingDic():
 
 
 
-def newsgroupsTrain():
+def newsgroupsTrain( embedding_type ):
     """
     Utilizes pre-trained glove embbedings located at de following GLOVE_DIR dir
     and creates a Keras Embbeding Layer
     """
 
 
-
-
-
-
     print "Loading embbeding-dictionary"
 
-    embeddings_dic = gloveEmbbedingDic()
+    if embedding_type == "glove":
+        embeddings_dic = gloveEmbbedingDic()
+    else :
+        print "Embbeding type not supported yet."
 
 
     print 'Loaded %s word vectors into embeddings_dic dictionary.' % len(embeddings_dic)
@@ -190,7 +189,7 @@ def newsgroupsTrain():
 
     model.fit(x_train, y_train,
               batch_size=128,
-              epochs=10,
+              epochs=15,
               validation_data=(x_val, y_val))
 
 
@@ -204,11 +203,10 @@ def main():
     """
 
 
-    newsgroupsTrain()
+
 
 
     # try:
-    #     parser = argparse.ArgumentParser()
     #     parser = argparse.ArgumentParser(
     #         description="Downloads the 20 newsgroups corpus and creates reference and labels files")
     #     parser.add_argument("dirpath",
@@ -235,4 +233,19 @@ if __name__ == "__main__":
     VALIDATION_SPLIT = 0.2
 
 
-    main()
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("wordVecs", choices=['smh', 'oneH', 'word2vec', 'glove',
+                        'contextVec', 'smh + contextVec', 'word2vec + contextVec'], 
+                        help="El tipo de representacion de las palabras \
+                        en el documento. (Sustituimos las palabras de cada documento \
+                        por dichos vectores, y sobre esa secuencia entrenamos la LSTM)")
+
+    args = parser.parse_args()
+
+    print "Training 20 News Groups with ", args.wordVecs, " embbedings"
+
+    newsgroupsTrain(args.wordVecs)
+
+
+
