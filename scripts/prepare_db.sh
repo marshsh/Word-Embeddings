@@ -28,7 +28,7 @@ GETDATA=false
 
 while [ "$1" != "" ]; do
     case $1 in
-        20NG | todosC )
+        20NG | 20ng | todosC )
             echo "Argument includes corpus 20NG"
             TWENTYNG=true
             ;;
@@ -75,16 +75,17 @@ while [ "$1" != "" ]; do
 done    
 
 
-echo "Checking variables status."
-echo
-echo
-if [ ! -f $THIRDPARTYPATH/glove.6B.zip ] ; then
-    echo "si en el if"
-fi
-echo $GLOVE && [ ! -f $THIRDPARTYPATH/glove.6B.zip ]
-echo
-echo
-echo
+
+# echo "Checking variables status."
+# echo
+# echo
+# if $SMH && $TWENTYNG ; then
+#     echo "si en el if"
+# fi
+# echo $TWENTYNG && $SMH
+# echo [ $SMH ] && [ $TWENTYNG ]
+# echo $SMH
+# echo $TWENTYNG
 
 
 #####################################

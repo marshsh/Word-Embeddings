@@ -150,10 +150,5 @@ class corpus:
 
 	################################################################################################
 
-	def prepareSMH(self):
-		
-
-	def bagOfWords(self):
-
 	def streamData(self):
 		
