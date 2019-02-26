@@ -52,13 +52,28 @@ def getEmbeddingLayer(embedding_type, corpus, MAX_NUM_WORDS=20000, EMBEDDING_DIM
 
     if embedding_type == "glove":
         embeddings_dic = embeddings.gloveEmbbedingDic()
+    elif embedding_type == "word2vec":
+        # embeddings_dic =
+        print "Word2vec in progress"
+    elif embedding_type == "smh":
+        embeddings_dic = smh_get_embeddings( args.filePrefix )
+    elif embedding_type == 'contextVec':
+        embeddings_dic = contextSMH_get_embeddings( args.filePrefix, args.size )
+    elif embedding_type == "glove+contextVec":
+        embeddings_dic = glove_and_context_embeddings( args.filePrefix, args.size )
+        print "Word2vec in progress"
+    elif embedding_type == 'oneH':
+        # embeddings_dic = 
+        print "Word2vec in progress"
     else :
         print "Embbeding type not supported yet."
 
 
 
-    print 'Preparing embedding matrix. Using ', embedding_type ,' embedding dictionary.'
+    EMBEDDING_DIM = len(embeddings_dic[embeddings_dic.keys()[0]])
 
+
+    print 'Preparing embedding matrix. Using ', embedding_type ,' embedding dictionary.'
     # prepare embedding matrix
     num_words = min(MAX_NUM_WORDS, len(corpus.word_index)) + 1
     embedding_matrix = np.zeros((num_words, EMBEDDING_DIM))
@@ -111,9 +126,6 @@ def main():
 
 
 
-
-
-
 if __name__ == "__main__":
 
 
@@ -124,20 +136,38 @@ if __name__ == "__main__":
     VALIDATION_SPLIT = 0.2
     TEST_SPLIT = 0.18
 
+    windowSize = 5
+
 
     parser = argparse.ArgumentParser()
     parser.add_argument("embedding_type", choices=['smh', 'oneH', 'word2vec', 'glove',
-                        'contextVec', 'smh + contextVec', 'word2vec + contextVec'], 
-                        help="El tipo de representacion de las palabras \
-                        en el documento. (Sustituimos las palabras de cada documento \
-                        por dichos vectores, y sobre esa secuencia entrenamos la LSTM)")
-
+                        'contextVec', 'word2vec+contextVec', 'glove+contextVec'], 
+                        help="Type of word representation used to train the model.")
     parser.add_argument("corpus", choices=[ '20NG', '20ng', 'r', 'reuters', 'w', 'wiki', 'wikipedia'],
                         help="Corpus to be used")
 
+    parser.add_argument("--size", type=int)
+
     args = parser.parse_args()
-
-
     print "Training ", args.corpus, "with ", args.embedding_type, " embbedings"
 
+
+
+    filePrefix = 'data/'
+    if args.corpus in ['20NG', '20ng']:
+        filePrefix = os.path.join(filePrefix, '20newsgroups', '20newsgroups')
+    elif args.corpus in ['r', 'reuters']:
+        filePrefix = os.path.join(filePrefix, 'reuters', 'reuters')
+    elif args.corpus in ['w', 'wiki', 'wikipedia']:
+        filePrefix = os.path.join(filePrefix, 'wikipedia', 'wikipedia')
+    else :
+        print " \n Couldn't find corresponding filePrefix \n"
+
+    args.filePrefix = filePrefix
+
+
+    if args.size == None:
+        args.size = windowSize
+
     main()
+

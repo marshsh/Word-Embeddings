@@ -69,7 +69,7 @@ class corpus:
         if nameC in ['20NG','20ng']:
             self.load20NG()
         elif nameC in ['reuters','r']:
-            slef.loadReuters()
+            self.loadReuters()
         else:
             print "No valid corpus"
 
@@ -94,7 +94,7 @@ class corpus:
     def loadReuters(self):
     	(x_train, y_train), (x_test, y_test) = reuters.load_data(test_split = 0.0)
 
-		self.texts = x_train
+        self.texts = x_train
         self.labels = y_train
         self.word_index_reuters = reuters.get_word_index(path="reuters_word_index.json")
 
@@ -151,4 +151,6 @@ class corpus:
 	################################################################################################
 
 	def streamData(self):
+		print 'a'
+
 		

@@ -88,6 +88,8 @@ done
 # echo $TWENTYNG
 
 
+
+
 #####################################
 #   Stop Words
 
@@ -106,7 +108,7 @@ fi
 if $GLOVE && [ ! -f $THIRDPARTYPATH/glove.6B.zip ] ; then
     if [ ! -f $THIRDPARTYPATH ] ; then
         mkdir $THIRDPARTYPATH
-        echo "En el if mal"
+        echo "En el if de crear folder"
     fi
 
     echo "Downloading pre-trained Glove word embeddings from Stanford s website."
