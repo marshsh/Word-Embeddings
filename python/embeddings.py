@@ -1,6 +1,6 @@
 import os
 import smh
-
+import numpy as np
 
 
 def gloveEmbbedingDic():

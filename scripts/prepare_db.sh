@@ -8,10 +8,10 @@ THIRDPARTYPATH=$ROOTPATH/3rdParty
 DATAPATH=$ROOTPATH/data
 mkdir -p $DATAPATH
 WIKIDUMPEN="https://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles.xml.bz2"
+W2VDUMP="https://s3.amazonaws.com/dl4j-distribution/GoogleNews-vectors-negative300.bin.gz"
 
 GLOVENAME=$THIRDPARTYPATH/glove.6B.zip
-
-
+W2VNAME=$THIRDPARTYPATH/word2vec300.bin.gz
 
 TWENTYNG=false
 REUTERS=false
@@ -105,18 +105,34 @@ fi
 #   Preloaded Encoders
 
 
-if $GLOVE && [ ! -f $THIRDPARTYPATH/glove.6B.zip ] ; then
-    if [ ! -f $THIRDPARTYPATH ] ; then
+if $GLOVE ; then
+    if [ ! -e $THIRDPARTYPATH ] ; then
         mkdir $THIRDPARTYPATH
-        echo "En el if de crear folder"
     fi
 
     echo "Downloading pre-trained Glove word embeddings from Stanford s website."
-    wget  -O $GLOVENAME "http://nlp.stanford.edu/data/glove.6B.zip"
+    wget  -cO $GLOVENAME "http://nlp.stanford.edu/data/glove.6B.zip"
     mkdir $THIRDPARTYPATH/glove.6B.2
     unzip -d $THIRDPARTYPATH/glove.6B.2/ $GLOVENAME
     # unzip -d `pwd`/glove.6B.2/ glove.6B.50d.zip
     echo "Glove unziped."
+fi
+
+
+
+
+
+# if $W2V && [ ! -f $THIRDPARTYPATH/ ] ; then
+if $W2V ; then
+    if [ ! -e $THIRDPARTYPATH ] ; then
+        mkdir $THIRDPARTYPATH
+    fi
+
+    echo "Downloading pre-trained Word2Vec embeddings."
+    wget -cO $W2VNAME "https://s3.amazonaws.com/dl4j-distribution/GoogleNews-vectors-negative300.bin.gz"
+    mkdir $THIRDPARTYPATH/word2vec300
+    gzip -d $THIRDPARTYPATH/word2vec300/ $W2VNAME
+    echo "word2vec unziped."
 fi
 
 

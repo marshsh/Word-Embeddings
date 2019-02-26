@@ -29,6 +29,8 @@ import codecs
 import re
 from collections import Counter
 from sklearn.datasets import fetch_20newsgroups
+from keras.layers import Conv1D, MaxPooling1D, Embedding
+from keras.initializers import Constant
 
 import os
 import numpy as np
@@ -39,6 +41,8 @@ from corpus import corpus
 import kerasModel as km
 
 
+from time import time
+from tensorflow.python.keras.callbacks import TensorBoard
 
 
 
@@ -106,17 +110,25 @@ def getEmbeddingLayer(embedding_type, corpus, MAX_NUM_WORDS=20000, EMBEDDING_DIM
 def main():
 
     corpusA = corpus(args.corpus, MAX_NUM_WORDS, MAX_SEQUENCE_LENGTH, VALIDATION_SPLIT, TEST_SPLIT)
+    numLabels = len(corpusA.y_train[0]) # labels are in cathegorical shape, this is the number of clases
 
     embedding_layer = getEmbeddingLayer(args.embedding_type, corpusA, MAX_NUM_WORDS, EMBEDDING_DIM)
 
-    model = km.getConvModel(embedding_layer, MAX_SEQUENCE_LENGTH)
+    # model = km.getConvModel(embedding_layer, numLabels, MAX_SEQUENCE_LENGTH)
+    model = km.getLSTMmodel(embedding_layer, numLabels, MAX_SEQUENCE_LENGTH=1000)
+
+    tensorboard = TensorBoard( log_dir="logs/{}_{}_{}".format( args.corpus, args.embedding_type, time()) )
+
+
 
 
     print 'Training model.'
-    model.fit(corpus.x_train, corpus.y_train,
+    model.fit(corpusA.x_train, corpusA.y_train,
               batch_size=128,
-              epochs=15,
-              validation_data=(corpus.x_test, corpus.y_test))
+              epochs=5,
+              validation_data=(corpusA.x_test, corpusA.y_test),
+              callbacks=[tensorboard])
+
 
 
 
