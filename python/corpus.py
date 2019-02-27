@@ -88,6 +88,7 @@ class corpus:
         self.texts = texts
         self.labels = labels
         self.labels_index = labels_index
+        print '20NG texts saved. \n'
 
 
 

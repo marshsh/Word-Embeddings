@@ -60,11 +60,11 @@ def getEmbeddingLayer(embedding_type, corpus, MAX_NUM_WORDS=20000, EMBEDDING_DIM
         # embeddings_dic =
         print "Word2vec in progress"
     elif embedding_type == "smh":
-        embeddings_dic = smh_get_embeddings( args.filePrefix )
+        embeddings_dic = embeddings.smh_get_embeddings( args.filePrefix )
     elif embedding_type == 'contextVec':
-        embeddings_dic = contextSMH_get_embeddings( args.filePrefix, args.size )
+        embeddings_dic = embeddings.contextSMH_get_embeddings( args.filePrefix, args.size )
     elif embedding_type == "glove+contextVec":
-        embeddings_dic = glove_and_context_embeddings( args.filePrefix, args.size )
+        embeddings_dic = embeddings.glove_and_context_embeddings( args.filePrefix, args.size )
         print "Word2vec in progress"
     elif embedding_type == 'oneH':
         # embeddings_dic = 
@@ -116,18 +116,19 @@ def main():
 
     # model = km.getConvModel(embedding_layer, numLabels, MAX_SEQUENCE_LENGTH)
     model = km.getLSTMmodel(embedding_layer, numLabels, MAX_SEQUENCE_LENGTH=1000)
+    # model = km.otherLSTM(embedding_layer, numLabels, MAX_SEQUENCE_LENGTH)
 
-    tensorboard = TensorBoard( log_dir="logs/{}_{}_{}".format( args.corpus, args.embedding_type, time()) )
+    # tensorboard = TensorBoard( log_dir="logs/{}_{}_{}".format( args.corpus, args.embedding_type, time()) )
 
 
 
 
     print 'Training model.'
     model.fit(corpusA.x_train, corpusA.y_train,
-              batch_size=128,
+              batch_size=18,
               epochs=5,
-              validation_data=(corpusA.x_test, corpusA.y_test),
-              callbacks=[tensorboard])
+              validation_data=(corpusA.x_test, corpusA.y_test) )
+              # callbacks=[tensorboard])
 
 
 
@@ -175,7 +176,11 @@ if __name__ == "__main__":
     else :
         print " \n Couldn't find corresponding filePrefix \n"
 
+    # Added filePrefix to args** just to make it more accesible. But it's not 
+    # a field users can fill.
     args.filePrefix = filePrefix
+
+    print "\n \n \n \n " + filePrefix
 
 
     if args.size == None:

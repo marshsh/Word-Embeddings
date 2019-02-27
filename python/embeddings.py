@@ -1,6 +1,9 @@
 import os
 import smh
 import numpy as np
+import pickle
+
+from discovery.topics import load_vocabulary, save_topics, save_time, get_models_docfreq, sort_topics, listdb_to_topics
 
 
 def gloveEmbbedingDic():
@@ -26,9 +29,10 @@ def gloveEmbbedingDic():
 
 	
 def smh_get_embeddings( filePrefix ):
+	print '*** smh_get_embeddings ***'
 	# the SMH vectors have already been calculated and saved
 	if os.path.exists(filePrefix + '.smh_vectors'):
-		return loadDic(filePrefix + '.smh_vectors')
+		return loadPickle(filePrefix + '.smh_vectors')
 
 	# the vectors have not been calculated, but the topic distribution have been saved
 	if os.path.exists(filePrefix + '.topicsRaw'):
@@ -38,6 +42,8 @@ def smh_get_embeddings( filePrefix ):
 	# We calculate all from the documents' bags of words
 	smh_get_model(filePrefix)
 	smhVectors = smh_embeddings_from_model( filePrefix )
+
+
 	return smhVectors
 
 
@@ -52,6 +58,11 @@ def contextSMH_get_embeddings( filePrefix, windowSize = 5 ):
 	contextVecBefore = {}
 	contextVecAfter = {}
 
+
+	if os.path.exists(filePrefix + '.contextSMH_vectors'):
+		return loadPickle(filePrefix + '.contextSMH_vectors')
+
+
 	# Load saved context vectors
 	if os.path.exists(filePrefix + '.ctxtBefore' + '.' + str(windowSize)):
 		contextVecBefore = loadDic(filePrefix + '.ctxtBefore' + '.' + str(windowSize))
@@ -59,7 +70,7 @@ def contextSMH_get_embeddings( filePrefix, windowSize = 5 ):
 	else:
 		# the SMH vectors have already been calculated and saved, but CTXT vectors haven't
 		if os.path.exists(filePrefix + '.smh_vectors'):
-			smhVectors = loadDic(filePrefix + '.smh_vectors')
+			smhVectors = loadPickle(filePrefix + '.smh_vectors')
 		else :
 			smhVectors = smh_get_embeddings( filePrefix )
 
@@ -69,6 +80,8 @@ def contextSMH_get_embeddings( filePrefix, windowSize = 5 ):
 	# Concatenation of embeddings.
 	for key in contextVecBefore.keys():
 		embeddings_dic[key] = contextVecBefore[key] + smhVectors[key] + contextVecAfter[key]
+
+	dumpPickle( filePrefix + 'contextSMH_vectors', embeddings_dic)
 
 	return embeddings_dic
 
@@ -91,22 +104,27 @@ def glove_and_context_embeddings(filePrefix, windowSize = 5 ):
 # SMH Vectors
 
 def smh_get_model( filePrefix ):
+	print '*** smh_get_model ***'
 
 	corpus = smh.listdb_load(filePrefix + '.corpus')
 	ifs = smh.listdb_load(filePrefix + '.ifs')
+	print 'Loaded .ref and .ifs'
 	discoverer = smh.SMHDiscoverer()
+	print 'Fitting SMH Discoverer'
 	models = discoverer.fit(ifs, expand = corpus)
 	models.save(filePrefix + '.topicsRaw')
-
+	print "SMH Model saved (a ldb with lists of topics' tokens)"
 
 
 # All preparations needed to use SMH, are done in the script prepare_db.sh
 def smh_embeddings_from_model( filePrefix ):
 
 	model = smh.listdb_load(filePrefix + '.topicsRaw')
-	vocabulary = smh.listdb_load(filePrefix + '.topicsRaw')
+	vocpath = filePrefix + '.vocab'
+	print "Loading vocabulary from", vocpath
+	vocabulary, docfreq = load_vocabulary(vocpath)
 
-	# vocabulary = getVocaularyDic()  # Falta Aquiiiii
+
 
 	smhVectors = {}
 
@@ -124,7 +142,7 @@ def smh_embeddings_from_model( filePrefix ):
 
 			smhVectors[word][topicId] = freq
 
-	saveDic( filePrefix + '.smh_vectors' )
+	dumpPickle( filePrefix + '.smh_vectors', smhVectors )
 
 	return smhVectors
 
@@ -152,8 +170,8 @@ def contextSMH(filePrefix, smhVectors, windowSize):
 					if i-h > -1 :
 						contextVecBefore[word] = contextVecBefore[word] + smhVectors[line[ i-h ]]
 
-	saveDic(contextVecBefore, filePrefix + '.ctxtBefore' + '.' + str(windowSize) )
-	saveDic(contextVecAfter, filePrefix + '.ctxtAfter' + '.' + str(windowSize) )
+	dumpPickle(contextVecBefore, filePrefix + '.ctxtBefore' + '.' + str(windowSize) )
+	dumpPickle(contextVecAfter, filePrefix + '.ctxtAfter' + '.' + str(windowSize) )
 
 	return contextVecBefore, contextVecAfter						
 
@@ -192,4 +210,15 @@ def loadDic(fileName):
 
 
 
+def dumpPickle(fileName, dic):
+	pickle_out = open(fileName,"wb")
+	pickle.dump(dic, pickle_out)
+	pickle_out.close()
+
+def loadPickle(fileName):
+	print 'Loading Pickle :  ' + fileName
+	pickle_in = open(fileName,"rb")
+	dic = pickle.load(pickle_in)
+	print 'Loading completed ... \n'
+	return dic
 

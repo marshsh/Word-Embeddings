@@ -45,7 +45,7 @@ def getLSTMmodel(embedding_layer, numLabels, MAX_SEQUENCE_LENGTH=1000):
     model.add(embedding_layer)
     model.add(Conv1D(filters=32, kernel_size=3, padding='same', activation='relu'))
     model.add(MaxPooling1D(pool_size=2))
-    model.add(LSTM(128))
+    model.add(LSTM(28))
     model.add(Dense(numLabels, activation='softmax'))
     model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
@@ -53,4 +53,16 @@ def getLSTMmodel(embedding_layer, numLabels, MAX_SEQUENCE_LENGTH=1000):
     return model
 
 
-   
+def otherLSTM(embedding_layer, numLabels, MAX_SEQUENCE_LENGTH=1000):
+    model = Sequential()
+    model.add(embedding_layer)
+    # model.add(Embedding(max_features, 128))
+    model.add(LSTM(128, dropout=0.2, recurrent_dropout=0.2))
+    model.add(Dense(numLabels, activation='softmax'))   
+    model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+
+
+    print(model.summary())
+    return model
+
+
