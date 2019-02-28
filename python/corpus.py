@@ -107,6 +107,7 @@ class corpus:
 
         Stores the word_index, and the data (tokenized and paded texts).
         """
+        print 'Tokenizing'
         tokenizer = Tokenizer(num_words=MAX_NUM_WORDS)
         tokenizer.fit_on_texts(self.texts)
         self.tokenizer = tokenizer
@@ -117,7 +118,7 @@ class corpus:
 
         self.data = pad_sequences(sequences, maxlen=MAX_SEQUENCE_LENGTH)
         self.labels = to_categorical(np.asarray(self.labels))
-
+        print 'Tokenizing finished. \n'
 
     def split_data(self, num_valid, num_test):
         """

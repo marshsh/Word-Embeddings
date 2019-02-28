@@ -65,7 +65,6 @@ def getEmbeddingLayer(embedding_type, corpus, MAX_NUM_WORDS=20000, EMBEDDING_DIM
         embeddings_dic = embeddings.contextSMH_get_embeddings( args.filePrefix, args.size )
     elif embedding_type == "glove+contextVec":
         embeddings_dic = embeddings.glove_and_context_embeddings( args.filePrefix, args.size )
-        print "Word2vec in progress"
     elif embedding_type == 'oneH':
         # embeddings_dic = 
         print "Word2vec in progress"
@@ -114,8 +113,8 @@ def main():
 
     embedding_layer = getEmbeddingLayer(args.embedding_type, corpusA, MAX_NUM_WORDS, EMBEDDING_DIM)
 
-    # model = km.getConvModel(embedding_layer, numLabels, MAX_SEQUENCE_LENGTH)
-    model = km.getLSTMmodel(embedding_layer, numLabels, MAX_SEQUENCE_LENGTH=1000)
+    model = km.getConvModel(embedding_layer, numLabels, MAX_SEQUENCE_LENGTH)
+    # model = km.getLSTMmodel(embedding_layer, numLabels, MAX_SEQUENCE_LENGTH=1000)
     # model = km.otherLSTM(embedding_layer, numLabels, MAX_SEQUENCE_LENGTH)
 
     # tensorboard = TensorBoard( log_dir="logs/{}_{}_{}".format( args.corpus, args.embedding_type, time()) )

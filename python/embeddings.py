@@ -2,6 +2,7 @@ import os
 import smh
 import numpy as np
 import pickle
+from collections import Iterable
 
 from discovery.topics import load_vocabulary, save_topics, save_time, get_models_docfreq, sort_topics, listdb_to_topics
 
@@ -43,6 +44,7 @@ def smh_get_embeddings( filePrefix ):
 	smh_get_model(filePrefix)
 	smhVectors = smh_embeddings_from_model( filePrefix )
 
+	dumpPickle( filePrefix + '.smh_vectors', smhVectors )
 
 	return smhVectors
 
@@ -52,49 +54,80 @@ def smh_get_embeddings( filePrefix ):
 
 def contextSMH_get_embeddings( filePrefix, windowSize = 5 ):
 
-	embeddings_dic = {}
-
-	smhVectors = {}	
-	contextVecBefore = {}
-	contextVecAfter = {}
+	if os.path.exists(filePrefix + '.context' + '.' + str(windowSize)):
+		contextVec = loadPickle(filePrefix + '.context' + '.' + str(windowSize))
+		return contextVec
 
 
-	if os.path.exists(filePrefix + '.contextSMH_vectors'):
-		return loadPickle(filePrefix + '.contextSMH_vectors')
 
 
 	# Load saved context vectors
 	if os.path.exists(filePrefix + '.ctxtBefore' + '.' + str(windowSize)):
-		contextVecBefore = loadDic(filePrefix + '.ctxtBefore' + '.' + str(windowSize))
-		contextVecAfter = loadDic(filePrefix + '.ctxtAfter' + '.' + str(windowSize))
+		print 'Loading contextVecBefore and ... \n'
+		contextVecBefore = loadPickle(filePrefix + '.ctxtBefore' + '.' + str(windowSize))
+		contextVecAfter = loadPickle(filePrefix + '.ctxtAfter' + '.' + str(windowSize))
+		# print contextVecBefore.keys()
 	else:
 		# the SMH vectors have already been calculated and saved, but CTXT vectors haven't
 		if os.path.exists(filePrefix + '.smh_vectors'):
 			smhVectors = loadPickle(filePrefix + '.smh_vectors')
 		else :
+			print 'Loading smhVectors \n'
 			smhVectors = smh_get_embeddings( filePrefix )
 
+		print 'Calculating contextVecBefore \n'
 		contextVecBefore, contextVecAfter = contextSMH(filePrefix, smhVectors, windowSize)
 
+		dumpPickle(filePrefix + '.ctxtBefore' + '.' + str(windowSize), contextVecBefore )
+		dumpPickle(filePrefix + '.ctxtAfter' + '.' + str(windowSize), contextVecAfter )
 
-	# Concatenation of embeddings.
+
+	# print ' \n Concatenation of embeddings.'
+	# for key in contextVecBefore.keys():
+	# 	embeddings_dic[key] =  contextVecBefore[key] + contextVecAfter[key]
+	# print 'Embeddings concatenated. \n'
+
+	print 'Adding ContextAfter and ContextBefore into new dictionary'
+
+	embeddings_dic = {}
+
+
+	print 'Length of contextVecBefore.keys() : ', len(contextVecBefore.keys()) 
+	sizeVectors = len(contextVecBefore[contextVecBefore.keys()[0]])
+
 	for key in contextVecBefore.keys():
-		embeddings_dic[key] = contextVecBefore[key] + smhVectors[key] + contextVecAfter[key]
+		embeddings_dic[key] =  [ contextVecBefore[key][x] + contextVecAfter[key][x] for x in range(sizeVectors)]
+	print 'Embeddings concatenated. \n'
 
-	dumpPickle( filePrefix + 'contextSMH_vectors', embeddings_dic)
+
+	dumpPickle(filePrefix + '.context' + '.' + str(windowSize), embeddings_dic)
+
 
 	return embeddings_dic
 
 
 def glove_and_context_embeddings(filePrefix, windowSize = 5 ):
 
+	if os.path.exists(filePrefix + '.glove_and_context'):
+		return loadPickle(filePrefix + '.glove_and_context')
+
+
 	glove = gloveEmbbedingDic()
 	context = contextSMH_get_embeddings(filePrefix, windowSize = 5 )
 
 	embeddings_dic = {}
+	sizeGlove = len(glove[glove.keys()[0]])
 
 	for key in context.keys():
-		embeddings_dic[key] = context[key] + glove[key]
+		extraV = glove.get(key)
+
+		if not isinstance(extraV, Iterable):
+			extraV = [ 0 for x in range(sizeGlove) ]
+
+		embeddings_dic[key] = np.concatenate([context[key] , extraV])
+
+
+	dumpPickle( filePrefix + '.glove_and_context', embeddings_dic )
 
 	return embeddings_dic
 
@@ -142,7 +175,7 @@ def smh_embeddings_from_model( filePrefix ):
 
 			smhVectors[word][topicId] = freq
 
-	dumpPickle( filePrefix + '.smh_vectors', smhVectors )
+	# dumpPickle( filePrefix + '.smh_vectors', smhVectors ) # Already saving in calling method
 
 	return smhVectors
 
@@ -158,20 +191,34 @@ def contextSMH(filePrefix, smhVectors, windowSize):
 	contextVecBefore = {}
 	contextVecAfter = {}
 
+	sizeVectors = len(smhVectors[smhVectors.keys()[0]])
+
 	with open(documentsFile, 'r') as f:
 		for line in f.readlines():
 			line = line.split(' ')
 			length = len(line)
 
 			for i, word in enumerate(line):
+
+				if smhVectors.get(word) != None:
+					if contextVecAfter.get(word) == None :
+						contextVecAfter[word] = smhVectors.get(word)
+						contextVecBefore[word] = smhVectors.get(word)
+				
 				for h in range(1,windowSize+1):
 					if i+h < length :
-						contextVecAfter[word] = contextVecAfter[word] + smhVectors[line[ i+h ]]
+						if smhVectors.get(line[ i+h ]) != None:
+							if smhVectors.get(word) != None:
+								if contextVecAfter.get(word) != None:
+									contextVecAfter[word] = [ contextVecAfter[word][x] + smhVectors.get(line[ i+h ])[x] for x in range(sizeVectors)  ]
 					if i-h > -1 :
-						contextVecBefore[word] = contextVecBefore[word] + smhVectors[line[ i-h ]]
-
-	dumpPickle(contextVecBefore, filePrefix + '.ctxtBefore' + '.' + str(windowSize) )
-	dumpPickle(contextVecAfter, filePrefix + '.ctxtAfter' + '.' + str(windowSize) )
+						if smhVectors.get(line[ i-h ]) != None:
+							if smhVectors.get(word) != None:
+								if contextVecBefore.get(word) != None:
+									contextVecBefore[word] = [ contextVecBefore[word][x] + smhVectors[line[ i-h ]][x] for x in range(sizeVectors)  ]
+				
+	# dumpPickle(contextVecBefore, filePrefix + '.ctxtBefore' + '.' + str(windowSize) )
+	# dumpPickle(contextVecAfter, filePrefix + '.ctxtAfter' + '.' + str(windowSize) )
 
 	return contextVecBefore, contextVecAfter						
 
@@ -193,32 +240,49 @@ def contextSMH(filePrefix, smhVectors, windowSize):
 # Usefull functions
 
 
-def saveDic(dic,fileName):
-	with open(fileName, 'w') as f:
-		for key, val in dic.items():
-			f.write( [key, val] )
+# def saveDic(dic,fileName):
+# 	with open(fileName, 'w') as f:
+# 		for key, val in dic.items():
+# 			f.write( [key, val] )
 
 
-def loadDic(fileName):
-	dic = {}
-	with open(fileName, 'r') as f:
-		for line in f.readlines():
-			key = line[0]
-			val = line[1:]
-			dic[key] = val
-	return dic
+# def loadDic(fileName):
+# 	dic = {}
+# 	with open(fileName, 'r') as f:
+# 		for line in f.readlines():
+# 			key = line[0]
+# 			val = line[1:]
+# 			dic[key] = val
+# 	return dic
 
 
 
 def dumpPickle(fileName, dic):
-	pickle_out = open(fileName,"wb")
+	pickle_out = open(fileName,"w")
 	pickle.dump(dic, pickle_out)
 	pickle_out.close()
 
 def loadPickle(fileName):
 	print 'Loading Pickle :  ' + fileName
-	pickle_in = open(fileName,"rb")
+	pickle_in = open(fileName,"r")
 	dic = pickle.load(pickle_in)
 	print 'Loading completed ... \n'
 	return dic
 
+
+
+
+
+
+	# Traceback (most recent call last):
+	#   File "python/train.py", line 189, in <module>
+	#     main()
+	#   File "python/train.py", line 115, in main
+	#     embedding_layer = getEmbeddingLayer(args.embedding_type, corpusA, MAX_NUM_WORDS, EMBEDDING_DIM)
+	#   File "python/train.py", line 65, in getEmbeddingLayer
+	#     embeddings_dic = embeddings.contextSMH_get_embeddings( args.filePrefix, args.size )
+	#   File "/home/mariana/Sheeeeeik-Code/Word-Embbedings/Word-Embeddings/python/embeddings.py", line 83, in contextSMH_get_embeddings
+	#     dumpPickle(contextVecBefore, filePrefix + '.ctxtBefore' + '.' + str(windowSize) )
+	#   File "/home/mariana/Sheeeeeik-Code/Word-Embbedings/Word-Embeddings/python/embeddings.py", line 227, in dumpPickle
+	#     pickle_out = open(fileName,"wb")
+	# TypeError: coercing to Unicode: need string or buffer, dict found
