@@ -113,11 +113,11 @@ def main():
 
     embedding_layer = getEmbeddingLayer(args.embedding_type, corpusA, MAX_NUM_WORDS, EMBEDDING_DIM)
 
-    model = km.getConvModel(embedding_layer, numLabels, MAX_SEQUENCE_LENGTH)
-    # model = km.getLSTMmodel(embedding_layer, numLabels, MAX_SEQUENCE_LENGTH=1000)
+    # model = km.getConvModel(embedding_layer, numLabels, MAX_SEQUENCE_LENGTH)
+    model = km.getLSTMmodel(embedding_layer, numLabels, MAX_SEQUENCE_LENGTH=1000)
     # model = km.otherLSTM(embedding_layer, numLabels, MAX_SEQUENCE_LENGTH)
 
-    # tensorboard = TensorBoard( log_dir="logs/{}_{}_{}".format( args.corpus, args.embedding_type, time()) )
+    tensorboard = TensorBoard( log_dir="logs/{}_{}_{}".format( args.corpus, args.embedding_type, time()) )
 
 
 
