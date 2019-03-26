@@ -11,7 +11,7 @@ WIKIDUMPEN="https://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-articl
 W2VDUMP="https://s3.amazonaws.com/dl4j-distribution/GoogleNews-vectors-negative300.bin.gz"
 
 GLOVENAME=$THIRDPARTYPATH/glove.6B.zip
-W2VNAME=$THIRDPARTYPATH/word2vec300.bin.gz
+W2VNAME=$THIRDPARTYPATH/word2vec300/word2vec300.bin.gz
 
 TWENTYNG=false
 REUTERS=false
@@ -124,15 +124,19 @@ fi
 
 # if $W2V && [ ! -f $THIRDPARTYPATH/ ] ; then
 if $W2V ; then
+    echo "Pre-procesing Word2Vec"
     if [ ! -e $THIRDPARTYPATH ] ; then
         mkdir $THIRDPARTYPATH
     fi
-
-    echo "Downloading pre-trained Word2Vec embeddings."
-    wget -cO $W2VNAME "https://s3.amazonaws.com/dl4j-distribution/GoogleNews-vectors-negative300.bin.gz"
-    mkdir $THIRDPARTYPATH/word2vec300
-    gzip -d $THIRDPARTYPATH/word2vec300/ $W2VNAME
-    echo "word2vec unziped."
+    if [ ! -e $THIRDPARTYPATH/word2vec300/word2vec300.bin ] ; then
+        echo "Downloading pre-trained Word2Vec embeddings."
+        wget -cO $W2VNAME "https://s3.amazonaws.com/dl4j-distribution/GoogleNews-vectors-negative300.bin.gz"
+        if [ ! -e $THIRDPARTYPATH/word2vec300 ] ; then
+            mkdir $THIRDPARTYPATH/word2vec300
+        fi
+        gunzip -k -d $THIRDPARTYPATH/word2vec300/word2vec300.bin
+        echo "word2vec unziped."
+    fi
 fi
 
 

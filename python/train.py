@@ -41,7 +41,7 @@ from corpus import corpus
 import kerasModel as km
 
 
-from time import time
+from time import time, localtime
 from tensorflow.python.keras.callbacks import TensorBoard
 
 
@@ -57,14 +57,13 @@ def getEmbeddingLayer(embedding_type, corpus, MAX_NUM_WORDS=20000, EMBEDDING_DIM
     if embedding_type == "glove":
         embeddings_dic = embeddings.gloveEmbbedingDic()
     elif embedding_type == "word2vec":
-        # embeddings_dic =
-        print "Word2vec in progress"
+        embeddings_dic = embeddings.word2vec_get_embeddings(args.filePrefix, corpus, reCalculate=args.reCalculate)
     elif embedding_type == "smh":
-        embeddings_dic = embeddings.smh_get_embeddings( args.filePrefix )
+        embeddings_dic = embeddings.smh_get_embeddings( args.filePrefix, reCalculate=args.reCalculate)
     elif embedding_type == 'contextVec':
-        embeddings_dic = embeddings.contextSMH_get_embeddings( args.filePrefix, args.size )
+        embeddings_dic = embeddings.contextSMH_get_embeddings( args.filePrefix, args.size, reCalculate=args.reCalculate)
     elif embedding_type == "glove+contextVec":
-        embeddings_dic = embeddings.glove_and_context_embeddings( args.filePrefix, args.size )
+        embeddings_dic = embeddings.glove_and_context_embeddings( args.filePrefix, args.size, reCalculate=args.reCalculate)
     elif embedding_type == 'oneH':
         # embeddings_dic = 
         print "Word2vec in progress"
@@ -117,7 +116,11 @@ def main():
     model = km.getLSTMmodel(embedding_layer, numLabels, MAX_SEQUENCE_LENGTH=1000)
     # model = km.otherLSTM(embedding_layer, numLabels, MAX_SEQUENCE_LENGTH)
 
-    tensorboard = TensorBoard( log_dir="logs/{}_{}_{}".format( args.corpus, args.embedding_type, time()) )
+    tensorboard = TensorBoard( log_dir="logs/{}_{}_{}-{}-{}-{}:{}:{}".format( 
+        args.corpus, args.embedding_type, localtime().tm_year, localtime().tm_mon, 
+        localtime().tm_mday, localtime().tm_hour, localtime().tm_min, localtime().tm_sec,
+        write_graph=False, histogram_freq=1, write_grads=True
+        ) )
 
 
 
@@ -126,8 +129,8 @@ def main():
     model.fit(corpusA.x_train, corpusA.y_train,
               batch_size=18,
               epochs=5,
-              validation_data=(corpusA.x_test, corpusA.y_test) )
-              # callbacks=[tensorboard])
+              validation_data=(corpusA.x_test, corpusA.y_test),
+              callbacks=[tensorboard])
 
 
 
@@ -160,11 +163,15 @@ if __name__ == "__main__":
 
     parser.add_argument("--size", type=int)
 
+    parser.add_argument("--reCalculate", help="re-calculate chosen word-vector embeddings", 
+                        action="store_true")
+
     args = parser.parse_args()
     print "Training ", args.corpus, "with ", args.embedding_type, " embbedings"
 
 
 
+    # Adding file-prefix to have a well organized way of saving pre-calculated embeddings.
     filePrefix = 'data/'
     if args.corpus in ['20NG', '20ng']:
         filePrefix = os.path.join(filePrefix, '20newsgroups', '20newsgroups')

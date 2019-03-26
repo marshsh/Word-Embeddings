@@ -2,6 +2,8 @@ import os
 import smh
 import numpy as np
 import pickle
+import gensim
+
 from collections import Iterable
 
 from discovery.topics import load_vocabulary, save_topics, save_time, get_models_docfreq, sort_topics, listdb_to_topics
@@ -29,14 +31,14 @@ def gloveEmbbedingDic():
     return embeddings_dic
 
 	
-def smh_get_embeddings( filePrefix ):
+def smh_get_embeddings( filePrefix, reCalculate=False ):
 	print '*** smh_get_embeddings ***'
 	# the SMH vectors have already been calculated and saved
-	if os.path.exists(filePrefix + '.smh_vectors'):
+	if os.path.exists(filePrefix + '.smh_vectors') and not reCalculate :
 		return loadPickle(filePrefix + '.smh_vectors')
 
 	# the vectors have not been calculated, but the topic distribution have been saved
-	if os.path.exists(filePrefix + '.topicsRaw'):
+	if os.path.exists(filePrefix + '.topicsRaw') and not reCalculate :
 		return smh_embeddings_from_model( filePrefix )
 
 
@@ -48,13 +50,47 @@ def smh_get_embeddings( filePrefix ):
 
 	return smhVectors
 
+def word2vec_get_embeddings( filePrefix, corpus, full=False, reCalculate=False ):
+	"""
+	In the prepare.sh script (with argument w2v), we download and extract 
+	pre-trained vectors on part of Google News dataset (about 100 billion words)
+	'GoogleNews-vectors-negative300.bin.gz'
+	vectors are extracted to file:
+	'Word-Embeddings/3rdParty/word2vec300/word2vec300.bin'
+
+	"""
+	print '*** word2vec_get_embeddings ***'
+
+	if  os.path.exists(filePrefix + '.w2vReduced') and not reCalculate :
+		reducedW2V = loadPickle(filePrefix + '.w2vReduced' )
+		return reducedW2V
+
+	print 'loading w2v model ...'
+	model = gensim.models.KeyedVectors.load_word2vec_format('./3rdParty/word2vec300/word2vec300.bin', binary=True)
+	print 'w2v model loaded.'
+
+	if full:
+		print 'returning original FULL w2v dictionary'
+		return model.wv
+
+
+	print 'Reducing w2v dictionay to vocabulary in corpus'
+	reducedW2V = {}
+	for word, i in corpus.word_index.items():
+		if word in model.wv:
+			reducedW2V[word] = model.wv[word]
+		else 
+			reducedW2V[word] = [0 for x in range(300)]
+
+
+	dumpPickle(filePrefix + '.w2vReduced' )
+	return reducedW2V
 
 
 
+def contextSMH_get_embeddings( filePrefix, windowSize = 5, reCalculate=False ):
 
-def contextSMH_get_embeddings( filePrefix, windowSize = 5 ):
-
-	if os.path.exists(filePrefix + '.context' + '.' + str(windowSize)):
+	if os.path.exists(filePrefix + '.context' + '.' + str(windowSize)) and not reCalculate :
 		contextVec = loadPickle(filePrefix + '.context' + '.' + str(windowSize))
 		return contextVec
 
@@ -62,14 +98,14 @@ def contextSMH_get_embeddings( filePrefix, windowSize = 5 ):
 
 
 	# Load saved context vectors
-	if os.path.exists(filePrefix + '.ctxtBefore' + '.' + str(windowSize)):
+	if os.path.exists(filePrefix + '.ctxtBefore' + '.' + str(windowSize)) and not reCalculate :
 		print 'Loading contextVecBefore and ... \n'
 		contextVecBefore = loadPickle(filePrefix + '.ctxtBefore' + '.' + str(windowSize))
 		contextVecAfter = loadPickle(filePrefix + '.ctxtAfter' + '.' + str(windowSize))
 		# print contextVecBefore.keys()
 	else:
 		# the SMH vectors have already been calculated and saved, but CTXT vectors haven't
-		if os.path.exists(filePrefix + '.smh_vectors'):
+		if os.path.exists(filePrefix + '.smh_vectors') and not reCalculate :
 			smhVectors = loadPickle(filePrefix + '.smh_vectors')
 		else :
 			print 'Loading smhVectors \n'
@@ -93,7 +129,7 @@ def contextSMH_get_embeddings( filePrefix, windowSize = 5 ):
 
 
 	print 'Length of contextVecBefore.keys() : ', len(contextVecBefore.keys()) 
-	sizeVectors = len(contextVecBefore[contextVecBefore.keys()[0]])
+	sizeVectors = len(contextVecBefore.itervalues().next())
 
 	for key in contextVecBefore.keys():
 		embeddings_dic[key] =  [ contextVecBefore[key][x] + contextVecAfter[key][x] for x in range(sizeVectors)]
@@ -106,9 +142,9 @@ def contextSMH_get_embeddings( filePrefix, windowSize = 5 ):
 	return embeddings_dic
 
 
-def glove_and_context_embeddings(filePrefix, windowSize = 5 ):
+def glove_and_context_embeddings(filePrefix, windowSize = 5, reCalculate=False ):
 
-	if os.path.exists(filePrefix + '.glove_and_context'):
+	if os.path.exists(filePrefix + '.glove_and_context') and not reCalculate :
 		return loadPickle(filePrefix + '.glove_and_context')
 
 
@@ -184,7 +220,7 @@ def smh_embeddings_from_model( filePrefix ):
 # SMH with context vectors
 
 
-def contextSMH(filePrefix, smhVectors, windowSize):
+def contextSMH(filePrefix, smhVectors, windowSize ):
 
 	documentsFile = filePrefix + '.ref'
 
@@ -271,18 +307,3 @@ def loadPickle(fileName):
 
 
 
-
-
-
-	# Traceback (most recent call last):
-	#   File "python/train.py", line 189, in <module>
-	#     main()
-	#   File "python/train.py", line 115, in main
-	#     embedding_layer = getEmbeddingLayer(args.embedding_type, corpusA, MAX_NUM_WORDS, EMBEDDING_DIM)
-	#   File "python/train.py", line 65, in getEmbeddingLayer
-	#     embeddings_dic = embeddings.contextSMH_get_embeddings( args.filePrefix, args.size )
-	#   File "/home/mariana/Sheeeeeik-Code/Word-Embbedings/Word-Embeddings/python/embeddings.py", line 83, in contextSMH_get_embeddings
-	#     dumpPickle(contextVecBefore, filePrefix + '.ctxtBefore' + '.' + str(windowSize) )
-	#   File "/home/mariana/Sheeeeeik-Code/Word-Embbedings/Word-Embeddings/python/embeddings.py", line 227, in dumpPickle
-	#     pickle_out = open(fileName,"wb")
-	# TypeError: coercing to Unicode: need string or buffer, dict found
