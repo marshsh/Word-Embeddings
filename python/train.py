@@ -42,7 +42,7 @@ import kerasModel as km
 
 
 from time import time, localtime
-from tensorflow.python.keras.callbacks import TensorBoard
+from tensorflow.python.keras.callbacks import TensorBoard, ModelCheckpoint, EarlyStopping
 
 
 
@@ -122,6 +122,25 @@ def main():
         write_graph=False, histogram_freq=1, write_grads=True
         ) )
 
+    checkPoint = ModelCheckpoint(filepath,
+        monitor='val_acc',
+        verbose=0,
+        save_best_only=True,
+        save_weights_only=False,
+        mode='auto',
+        period=1
+        )
+
+    earlyStopping = EarlyStopping(
+        monitor='val_acc',
+        min_delta=0,
+        patience=3,
+        verbose=0,
+        mode='auto',
+        baseline=None,
+        restore_best_weights=False
+        )
+
 
 
 
@@ -130,7 +149,7 @@ def main():
               batch_size=18,
               epochs=5,
               validation_data=(corpusA.x_test, corpusA.y_test),
-              callbacks=[tensorboard])
+              callbacks=[tensorboard, checkPoint, earlyStopping])
 
 
 
