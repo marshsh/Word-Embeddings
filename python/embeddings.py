@@ -180,21 +180,9 @@ def glove_and_context_embeddings(filePrefix, windowSize = 5, reCalculate=False, 
 def smh_get_model( filePrefix ):
 	print '*** smh_get_model ***'
 
-	filePrefix = filePrefix[0:filePrefix.rfind(os.sep)]
+	corpusFile = getFileExtension( filePrefix, '.corpus')
+	ifsFile = getFileExtension( filePrefix, '.ifs')
 
-	corpusFile = ''
-	for fileN in os.listdir(filePrefix):
-		if '.corpus' in fileN:
-			corpusFile = filePrefix + os.sep + fileN
-			print ' \n corpus File :  {}  \n '.format(corpusFile)
-			break
-
-	ifsFile = ''
-	for fileN in os.listdir(filePrefix):
-		if '.ifs' in fileN:
-			ifsFile = filePrefix + os.sep + fileN
-			print ' \n ifs File :  {}  \n '.format(ifsFile)
-			break
 
 	corpus = smh.listdb_load(corpusFile)
 	ifs = smh.listdb_load(ifsFile)
@@ -212,9 +200,12 @@ def smh_embeddings_from_model( filePrefix, logNormal=False ):
 	if logNormal:
 		return smh_logNormal_embeddings( filePrefix, reCalculate=True )
 
+	filePrefix = filePrefix[0:filePrefix.rfind(os.sep)]
 
-	model = smh.listdb_load(filePrefix + '.topicsRaw')
-	vocpath = filePrefix + '.vocab'
+	topicsRawPath = getFileExtension( filePrefix, '.topicsRaw')
+	model = smh.listdb_load(topicsRawPath)
+
+	vocpath = getFileExtension( filePrefix, '.vocab')
 	print "Loading vocabulary from", vocpath
 	vocabulary, docfreq = load_vocabulary(vocpath)
 
@@ -364,3 +355,16 @@ def loadPickle(fileName):
 
 
 
+
+
+def getFileExtension( filePrefix, extension):
+
+	filePrefix = filePrefix[0:filePrefix.rfind(os.sep)] + os.sep
+
+
+	filePath = ''
+	for fileN in os.listdir(filePrefix):
+		if extension in fileN:
+			filePath = filePrefix + fileN
+			print "\n {} \n".format(filePath)
+			return filePath
