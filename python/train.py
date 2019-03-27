@@ -217,7 +217,7 @@ if __name__ == "__main__":
         print " \n Couldn't find corresponding filePrefix \n"
 
     if args.logNormal:
-        filePrefix += _logNorm
+        filePrefix += '_logNorm'
 
     # Added filePrefix to args** just to make it more accesible. But it's not 
     # a field users can fill.
