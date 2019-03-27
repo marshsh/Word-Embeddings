@@ -185,13 +185,15 @@ def smh_get_model( filePrefix ):
 	corpusFile = ''
 	for fileN in os.walk(filePrefix):
 		if '.corpus' in fileN:
-			corpusFile = fileN
+			corpusFile = filePrefix + fileN
+			print ' \n corpus File :  {}  \n '.format(corpusFile)
 			break
 
 	ifsFile = ''
 	for fileN in os.walk(filePrefix):
 		if '.ifs' in fileN:
-			ifsFile = fileN
+			ifsFile = filePrefix + fileN
+			print ' \n ifs File :  {}  \n '.format(ifsFile)
 			break
 
 	corpus = smh.listdb_load(corpusFile)
