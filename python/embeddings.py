@@ -183,14 +183,14 @@ def smh_get_model( filePrefix ):
 	filePrefix = filePrefix[0:filePrefix.rfind(os.sep)]
 
 	corpusFile = ''
-	for fileN in os.walk(filePrefix):
+	for fileN in os.listdir(filePrefix):
 		if '.corpus' in fileN:
 			corpusFile = filePrefix + fileN
 			print ' \n corpus File :  {}  \n '.format(corpusFile)
 			break
 
 	ifsFile = ''
-	for fileN in os.walk(filePrefix):
+	for fileN in os.listdir(filePrefix):
 		if '.ifs' in fileN:
 			ifsFile = filePrefix + fileN
 			print ' \n ifs File :  {}  \n '.format(ifsFile)

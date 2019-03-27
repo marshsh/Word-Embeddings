@@ -223,7 +223,7 @@ if __name__ == "__main__":
     # a field users can fill.
     args.filePrefix = filePrefix
 
-    print "\n \n \n \n " + filePrefix
+    print "\n \n \n \n" + filePrefix
 
 
     if args.size == None:
