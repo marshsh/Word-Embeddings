@@ -179,6 +179,8 @@ def glove_and_context_embeddings(filePrefix, windowSize = 5, reCalculate=False, 
 def smh_get_model( filePrefix ):
 	print '*** smh_get_model ***'
 
+	filePrefix = filePrefix.replace("_logNorm", "")
+
 	corpus = smh.listdb_load(filePrefix + '.corpus')
 	ifs = smh.listdb_load(filePrefix + '.ifs')
 	print 'Loaded .ref and .ifs'
