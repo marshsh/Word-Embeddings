@@ -56,27 +56,23 @@ def getEmbeddingLayer(embedding_type, corpus, MAX_NUM_WORDS=20000, EMBEDDING_DIM
 
     if embedding_type == "glove":
         embeddings_dic = embeddings.gloveEmbbedingDic()
-    elif embedding_type == "word2vec":
+    elif embedding_type == "w2v":
         embeddings_dic = embeddings.word2vec_get_embeddings(args.filePrefix, corpus, reCalculate=args.reCalculate)
     elif embedding_type == "smh":
         embeddings_dic = embeddings.smh_get_embeddings( args.filePrefix, reCalculate=args.reCalculate)
-    elif embedding_type == "smh-Normal":
-        embeddings_dic = embeddings.smh_logNormal_embeddings( args.filePrefix, reCalculate=args.reCalculate)
+    elif embedding_type == "smh_logNormal":
+        embeddings_dic = embeddings.smh_get_embeddings( args.filePrefix, reCalculate=args.reCalculate, logNormal=True)
     elif embedding_type == 'contextVec':
         embeddings_dic = embeddings.contextSMH_get_embeddings( args.filePrefix, args.size, reCalculate=args.reCalculate)
-    elif embedding_type == 'contextVec-Normal':
-
-'
+    elif embedding_type == 'contextVec_logNormal':
         embeddings_dic = embeddings.contextSMH_get_embeddings( args.filePrefix, args.size, reCalculate=args.reCalculate, logNormal=True)
     elif embedding_type == "glove+contextVec":
         embeddings_dic = embeddings.glove_and_context_embeddings( args.filePrefix, args.size, reCalculate=args.reCalculate)
-    elif embedding_type == "glove+contextVec":
-
-'
+    elif embedding_type == "glove+contextVec_logNormal":
         embeddings_dic = embeddings.glove_and_context_embeddings( args.filePrefix, args.size, reCalculate=args.reCalculate, logNormal=True)
     elif embedding_type == 'oneH':
         # embeddings_dic = 
-        print "Word2vec in progress"
+        print "oneH in progress"
     else :
         print "Embbeding type not supported yet."
 
@@ -126,13 +122,16 @@ def main():
     model = km.getLSTMmodel(embedding_layer, numLabels, MAX_SEQUENCE_LENGTH=1000)
     # model = km.otherLSTM(embedding_layer, numLabels, MAX_SEQUENCE_LENGTH)
 
-    tensorboard = TensorBoard( log_dir="logs/{}_{}_{}-{}-{}-{}:{}:{}".format( 
+    callBackName = "{}_{}_{}-{}-{}-{}:{}:{}".format( 
         args.corpus, args.embedding_type, localtime().tm_year, localtime().tm_mon, 
-        localtime().tm_mday, localtime().tm_hour, localtime().tm_min, localtime().tm_sec,
-        write_graph=False, histogram_freq=1, write_grads=True
-        ) )
+        localtime().tm_mday, localtime().tm_hour, localtime().tm_min, localtime().tm_sec)
 
-    checkPoint = ModelCheckpoint(filepath,
+    tensorboard = TensorBoard( log_dir="logs/"+callBackName,
+        write_graph=False, histogram_freq=1, write_grads=True
+        )
+
+    checkPoint = ModelCheckpoint(
+        "checkPoints/"+callBackName,
         monitor='val_acc',
         verbose=0,
         save_best_only=True,
@@ -184,8 +183,8 @@ if __name__ == "__main__":
 
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("embedding_type", choices=['smh', 'oneH', 'word2vec', 'glove',
-                        'contextVec', 'word2vec+contextVec', 'glove+contextVec'], 
+    parser.add_argument("embedding_type", choices=['smh', 'oneH', 'w2v', 'glove',
+                        'contextVec', 'w2v+contextVec', 'glove+contextVec'], 
                         help="Type of word representation used to train the model.")
     parser.add_argument("corpus", choices=[ '20NG', '20ng', 'r', 'reuters', 'w', 'wiki', 'wikipedia'],
                         help="Corpus to be used")
@@ -201,6 +200,9 @@ if __name__ == "__main__":
     args = parser.parse_args()
     print "Training ", args.corpus, "with ", args.embedding_type, " embbedings"
 
+
+    if args.logNormal:
+        args.embedding_type += "_logNormal"
 
 
     # Adding file-prefix to have a well organized way of saving pre-calculated embeddings.
