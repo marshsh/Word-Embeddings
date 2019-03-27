@@ -60,10 +60,20 @@ def getEmbeddingLayer(embedding_type, corpus, MAX_NUM_WORDS=20000, EMBEDDING_DIM
         embeddings_dic = embeddings.word2vec_get_embeddings(args.filePrefix, corpus, reCalculate=args.reCalculate)
     elif embedding_type == "smh":
         embeddings_dic = embeddings.smh_get_embeddings( args.filePrefix, reCalculate=args.reCalculate)
+    elif embedding_type == "smh-Normal":
+        embeddings_dic = embeddings.smh_logNormal_embeddings( args.filePrefix, reCalculate=args.reCalculate)
     elif embedding_type == 'contextVec':
         embeddings_dic = embeddings.contextSMH_get_embeddings( args.filePrefix, args.size, reCalculate=args.reCalculate)
+    elif embedding_type == 'contextVec-Normal':
+
+'
+        embeddings_dic = embeddings.contextSMH_get_embeddings( args.filePrefix, args.size, reCalculate=args.reCalculate, logNormal=True)
     elif embedding_type == "glove+contextVec":
         embeddings_dic = embeddings.glove_and_context_embeddings( args.filePrefix, args.size, reCalculate=args.reCalculate)
+    elif embedding_type == "glove+contextVec":
+
+'
+        embeddings_dic = embeddings.glove_and_context_embeddings( args.filePrefix, args.size, reCalculate=args.reCalculate, logNormal=True)
     elif embedding_type == 'oneH':
         # embeddings_dic = 
         print "Word2vec in progress"
@@ -184,6 +194,9 @@ if __name__ == "__main__":
 
     parser.add_argument("--reCalculate", help="re-calculate chosen word-vector embeddings", 
                         action="store_true")
+    
+    parser.add_argument("--logNormal", help="utilize log-Normalization in smh word-vector embeddings", 
+                        action="store_true")
 
     args = parser.parse_args()
     print "Training ", args.corpus, "with ", args.embedding_type, " embbedings"
@@ -193,13 +206,16 @@ if __name__ == "__main__":
     # Adding file-prefix to have a well organized way of saving pre-calculated embeddings.
     filePrefix = 'data/'
     if args.corpus in ['20NG', '20ng']:
-        filePrefix = os.path.join(filePrefix, '20newsgroups', '20newsgroups')
+        filePrefix = os.path.join(filePrefix, '20newsgroups', '20ng')
     elif args.corpus in ['r', 'reuters']:
         filePrefix = os.path.join(filePrefix, 'reuters', 'reuters')
     elif args.corpus in ['w', 'wiki', 'wikipedia']:
-        filePrefix = os.path.join(filePrefix, 'wikipedia', 'wikipedia')
+        filePrefix = os.path.join(filePrefix, 'wikipedia', 'wiki')
     else :
         print " \n Couldn't find corresponding filePrefix \n"
+
+    if logNormal:
+        filePrefix += _logNorm
 
     # Added filePrefix to args** just to make it more accesible. But it's not 
     # a field users can fill.

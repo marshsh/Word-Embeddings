@@ -5,6 +5,7 @@ import pickle
 import gensim
 
 from collections import Iterable
+from math import log1p
 
 from discovery.topics import load_vocabulary, save_topics, save_time, get_models_docfreq, sort_topics, listdb_to_topics
 
@@ -31,20 +32,22 @@ def gloveEmbbedingDic():
     return embeddings_dic
 
 	
-def smh_get_embeddings( filePrefix, reCalculate=False ):
+def smh_get_embeddings( filePrefix, reCalculate=False, logNormal=False):
 	print '*** smh_get_embeddings ***'
+
+
 	# the SMH vectors have already been calculated and saved
 	if os.path.exists(filePrefix + '.smh_vectors') and not reCalculate :
 		return loadPickle(filePrefix + '.smh_vectors')
 
 	# the vectors have not been calculated, but the topic distribution have been saved
 	if os.path.exists(filePrefix + '.topicsRaw') and not reCalculate :
-		return smh_embeddings_from_model( filePrefix )
+		return smh_embeddings_from_model( filePrefix, logNormal=logNormal )
 
 
 	# We calculate all from the documents' bags of words
 	smh_get_model(filePrefix)
-	smhVectors = smh_embeddings_from_model( filePrefix )
+	smhVectors = smh_embeddings_from_model( filePrefix , logNormal=logNormal )
 
 	dumpPickle( filePrefix + '.smh_vectors', smhVectors )
 
@@ -88,7 +91,7 @@ def word2vec_get_embeddings( filePrefix, corpus, full=False, reCalculate=False )
 
 
 
-def contextSMH_get_embeddings( filePrefix, windowSize = 5, reCalculate=False ):
+def contextSMH_get_embeddings( filePrefix, windowSize = 5, reCalculate=False, logNormal=False):
 
 	if os.path.exists(filePrefix + '.context' + '.' + str(windowSize)) and not reCalculate :
 		contextVec = loadPickle(filePrefix + '.context' + '.' + str(windowSize))
@@ -98,7 +101,8 @@ def contextSMH_get_embeddings( filePrefix, windowSize = 5, reCalculate=False ):
 
 
 	# Load saved context vectors
-	if os.path.exists(filePrefix + '.ctxtBefore' + '.' + str(windowSize)) and not reCalculate :
+	if os.path.exists(filePrefix + '.ctxtBefore' + '.' + str(windowSize)) and \
+	  os.path.exists(filePrefix + '.ctxtBefore' + '.' + str(windowSize)) and not reCalculate :
 		print 'Loading contextVecBefore and ... \n'
 		contextVecBefore = loadPickle(filePrefix + '.ctxtBefore' + '.' + str(windowSize))
 		contextVecAfter = loadPickle(filePrefix + '.ctxtAfter' + '.' + str(windowSize))
@@ -109,10 +113,10 @@ def contextSMH_get_embeddings( filePrefix, windowSize = 5, reCalculate=False ):
 			smhVectors = loadPickle(filePrefix + '.smh_vectors')
 		else :
 			print 'Loading smhVectors \n'
-			smhVectors = smh_get_embeddings( filePrefix )
+			smhVectors = smh_get_embeddings( filePrefix, reCalculate=reCalculate, logNormal=logNormal )
 
 		print 'Calculating contextVecBefore \n'
-		contextVecBefore, contextVecAfter = contextSMH(filePrefix, smhVectors, windowSize)
+		contextVecBefore, contextVecAfter = contextSMH(filePrefix, smhVectors, windowSize, logNormal=logNormal)
 
 		dumpPickle(filePrefix + '.ctxtBefore' + '.' + str(windowSize), contextVecBefore )
 		dumpPickle(filePrefix + '.ctxtAfter' + '.' + str(windowSize), contextVecAfter )
@@ -142,14 +146,14 @@ def contextSMH_get_embeddings( filePrefix, windowSize = 5, reCalculate=False ):
 	return embeddings_dic
 
 
-def glove_and_context_embeddings(filePrefix, windowSize = 5, reCalculate=False ):
+def glove_and_context_embeddings(filePrefix, windowSize = 5, reCalculate=False, logNormal=False ):
 
 	if os.path.exists(filePrefix + '.glove_and_context') and not reCalculate :
 		return loadPickle(filePrefix + '.glove_and_context')
 
 
 	glove = gloveEmbbedingDic()
-	context = contextSMH_get_embeddings(filePrefix, windowSize = 5 )
+	context = contextSMH_get_embeddings(filePrefix, windowSize = 5, logNormal=logNormal )
 
 	embeddings_dic = {}
 	sizeGlove = len(glove[glove.keys()[0]])
@@ -186,7 +190,11 @@ def smh_get_model( filePrefix ):
 
 
 # All preparations needed to use SMH, are done in the script prepare_db.sh
-def smh_embeddings_from_model( filePrefix ):
+def smh_embeddings_from_model( filePrefix, logNormal=False ):
+
+	if logNormal:
+		return smh_logNormal_embeddings( filePrefix, reCalculate=True )
+
 
 	model = smh.listdb_load(filePrefix + '.topicsRaw')
 	vocpath = filePrefix + '.vocab'
@@ -216,11 +224,35 @@ def smh_embeddings_from_model( filePrefix ):
 	return smhVectors
 
 
+def smh_logNormal_embeddings(  filePrefix, reCalculate=False  ):
+
+	smhVectors = smh_get_embeddings( filePrefix, reCalculate=reCalculate )
+	smhLogN = []
+
+	for i, word in enumerate(smhVectors):
+		smhLogN[i] = logNormalize(word)
+
+	return smhLogN
+
+
+def logNormalize(vector):
+	"""
+	Returns a log-Normalization of given vector.
+	"""
+	logVector = [ log1p(x) for x in vector ]
+	suma = sum(logVector)    
+	r = [ float(x)/suma for x in logVector]
+
+	return r
+
+ 
+
+
 ################################################################################
 # SMH with context vectors
 
 
-def contextSMH(filePrefix, smhVectors, windowSize ):
+def contextSMH(filePrefix, smhVectors, windowSize, logNormal=logNormal ):
 
 	documentsFile = filePrefix + '.ref'
 
@@ -255,6 +287,14 @@ def contextSMH(filePrefix, smhVectors, windowSize ):
 				
 	# dumpPickle(contextVecBefore, filePrefix + '.ctxtBefore' + '.' + str(windowSize) )
 	# dumpPickle(contextVecAfter, filePrefix + '.ctxtAfter' + '.' + str(windowSize) )
+
+	if logNormal:
+		for i, word in enumerate(contextVecBefore):
+			contextVecBefore[i] = logNormalize(word)
+		for i, word in enumerate(contextVecAfter):
+			contextVecAfter[i] = logNormalize(word)
+
+
 
 	return contextVecBefore, contextVecAfter						
 
