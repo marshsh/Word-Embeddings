@@ -208,7 +208,7 @@ if __name__ == "__main__":
     # Adding file-prefix to have a well organized way of saving pre-calculated embeddings.
     filePrefix = 'data/'
     if args.corpus in ['20NG', '20ng']:
-        filePrefix = os.path.join(filePrefix, '20newsgroups', '20ng')
+        filePrefix = os.path.join(filePrefix, '20newsgroups', '20newsgroups')
     elif args.corpus in ['r', 'reuters']:
         filePrefix = os.path.join(filePrefix, 'reuters', 'reuters')
     elif args.corpus in ['w', 'wiki', 'wikipedia']:

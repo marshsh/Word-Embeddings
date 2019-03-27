@@ -176,13 +176,26 @@ def glove_and_context_embeddings(filePrefix, windowSize = 5, reCalculate=False, 
 #################################################################################################
 # SMH Vectors
 
+
 def smh_get_model( filePrefix ):
 	print '*** smh_get_model ***'
 
-	filePrefix = filePrefix.replace("_logNorm", "")
+	filePrefix = filePrefix[0:filePrefix.rfind(os.sep)]
 
-	corpus = smh.listdb_load(filePrefix + '.corpus')
-	ifs = smh.listdb_load(filePrefix + '.ifs')
+	corpusFile = ''
+	for fileN in os.walk(filePrefix):
+		if '.corpus' in fileN:
+			corpusFile = fileN
+			break
+
+	ifsFile = ''
+	for fileN in os.walk(filePrefix):
+		if '.ifs' in fileN:
+			ifsFile = fileN
+			break
+
+	corpus = smh.listdb_load(corpusFile)
+	ifs = smh.listdb_load(ifsFile)
 	print 'Loaded .ref and .ifs'
 	discoverer = smh.SMHDiscoverer()
 	print 'Fitting SMH Discoverer'
