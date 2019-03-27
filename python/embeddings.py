@@ -252,7 +252,7 @@ def logNormalize(vector):
 # SMH with context vectors
 
 
-def contextSMH(filePrefix, smhVectors, windowSize, logNormal=logNormal ):
+def contextSMH(filePrefix, smhVectors, windowSize, logNormal=False ):
 
 	documentsFile = filePrefix + '.ref'
 
