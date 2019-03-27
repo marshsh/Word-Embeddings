@@ -200,8 +200,6 @@ def smh_embeddings_from_model( filePrefix, logNormal=False ):
 	if logNormal:
 		return smh_logNormal_embeddings( filePrefix, reCalculate=True )
 
-	filePrefix = filePrefix[0:filePrefix.rfind(os.sep)]
-
 	topicsRawPath = getFileExtension( filePrefix, '.topicsRaw')
 	model = smh.listdb_load(topicsRawPath)
 
