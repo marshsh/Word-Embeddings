@@ -82,7 +82,7 @@ def word2vec_get_embeddings( filePrefix, corpus, full=False, reCalculate=False )
 	for word, i in corpus.word_index.items():
 		if word in model.wv:
 			reducedW2V[word] = model.wv[word]
-		else 
+		else :
 			reducedW2V[word] = [0 for x in range(300)]
 
 
