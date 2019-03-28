@@ -232,11 +232,11 @@ def smh_embeddings_from_model( filePrefix, logNormal=False ):
 
 def smh_logNormal_embeddings(  filePrefix, reCalculate=False  ):
 
-	smhVectors = smh_get_embeddings( filePrefix, reCalculate=reCalculate )
-	smhLogN = []
+	smhVectorsDic = smh_get_embeddings( filePrefix, reCalculate=reCalculate )
+	smhLogN = {}
 
-	for i, word in enumerate(smhVectors):
-		smhLogN[i] = logNormalize(word)
+	for word, vector in smhVectorsDic.items():
+		smhLogN[word] = logNormalize(vector)
 
 	return smhLogN
 
@@ -295,10 +295,10 @@ def contextSMH(filePrefix, smhVectors, windowSize, logNormal=False ):
 	# dumpPickle(contextVecAfter, filePrefix + '.ctxtAfter' + '.' + str(windowSize) )
 
 	if logNormal:
-		for i, word in enumerate(contextVecBefore):
-			contextVecBefore[i] = logNormalize(word)
-		for i, word in enumerate(contextVecAfter):
-			contextVecAfter[i] = logNormalize(word)
+		for word, vector in contextVecBefore.items():
+			contextVecBefore[word] = logNormalize(vector)
+		for i, word in contextVecAfter.items():
+			contextVecAfter[word] = logNormalize(vector)
 
 
 
