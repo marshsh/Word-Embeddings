@@ -3,9 +3,9 @@
 
 
 import numpy as np
-from keras.layers import Dense, Input, GlobalMaxPooling1D
-from keras.layers import Conv1D, MaxPooling1D, Embedding, LSTM
-from keras.models import Model, Sequential
+from tensorflow.keras.layers import Dense, Input, GlobalMaxPooling1D
+from tensorflow.keras.layers import Conv1D, MaxPooling1D, Embedding, LSTM
+from tensorflow.keras.models import Model, Sequential
 
 
 

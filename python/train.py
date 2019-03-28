@@ -29,13 +29,13 @@ import codecs
 import re
 from collections import Counter
 from sklearn.datasets import fetch_20newsgroups
-from keras.layers import Conv1D, MaxPooling1D, Embedding
-from keras.initializers import Constant
+from tensorflow.keras.layers import Conv1D, MaxPooling1D, Embedding
+from tensorflow.keras.initializers import Constant
 
 import os
 import numpy as np
 
-
+# Our classes:
 import embeddings
 from corpus import corpus
 import kerasModel as km

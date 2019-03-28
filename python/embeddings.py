@@ -230,7 +230,7 @@ def smh_embeddings_from_model( filePrefix, logNormal=False ):
 	return smhVectors
 
 
-def smh_logNormal_embeddings(  filePrefix, reCalculate=False  ):
+def smh_logNormal_embeddings( filePrefix ):
 
 	smhVectorsDic = smh_get_embeddings( filePrefix, reCalculate=reCalculate )
 	smhLogN = {}
