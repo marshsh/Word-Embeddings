@@ -156,7 +156,7 @@ def main():
     print 'Training model.'
     model.fit(corpusA.x_train, corpusA.y_train,
               batch_size=18,
-              epochs=5,
+              epochs=EPOCHS,
               validation_data=(corpusA.x_test, corpusA.y_test),
               callbacks=[tensorboard, checkPoint, earlyStopping])
 
@@ -170,6 +170,8 @@ def main():
 
 
 if __name__ == "__main__":
+
+    EPOCHS = 100
 
 
     MAX_SEQUENCE_LENGTH = 1000
