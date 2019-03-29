@@ -116,7 +116,7 @@ def main():
     corpusA = corpus(args.corpus, MAX_NUM_WORDS, MAX_SEQUENCE_LENGTH, VALIDATION_SPLIT, TEST_SPLIT)
     numLabels = len(corpusA.y_train[0]) # labels are in cathegorical shape, this is the number of clases
 
-    embedding_layer = getEmbeddingLayer(args.embedding_type, corpusA, MAX_NUM_WORDS, EMBEDDING_DIM)
+            embedding_layer = getEmbeddingLayer(args.embedding_type, corpusA, MAX_NUM_WORDS, EMBEDDING_DIM)
 
     # model = km.getConvModel(embedding_layer, numLabels, MAX_SEQUENCE_LENGTH)
     model = km.getLSTMmodel(embedding_layer, numLabels, MAX_SEQUENCE_LENGTH=1000)
@@ -143,11 +143,11 @@ def main():
     earlyStopping = EarlyStopping(
         monitor='val_acc',
         min_delta=0,
-        patience=3,
+        patience=15,
         verbose=0,
         mode='auto',
         baseline=None,
-        restore_best_weights=False
+        restore_best_weights=True
         )
 
 
