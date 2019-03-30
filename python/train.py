@@ -113,43 +113,56 @@ def getEmbeddingLayer(embedding_type, corpus, MAX_NUM_WORDS=20000, EMBEDDING_DIM
 
 def main():
 
-    corpusA = corpus(args.corpus, MAX_NUM_WORDS, MAX_SEQUENCE_LENGTH, VALIDATION_SPLIT, TEST_SPLIT)
-    numLabels = len(corpusA.y_train[0]) # labels are in cathegorical shape, this is the number of clases
 
-            embedding_layer = getEmbeddingLayer(args.embedding_type, corpusA, MAX_NUM_WORDS, EMBEDDING_DIM)
+    modelName = "./savedModels/{}_{}".format(args.corpus, args.embedding_type)
+    if args.logNormal :
+        modelName += "_logNormal"
 
-    # model = km.getConvModel(embedding_layer, numLabels, MAX_SEQUENCE_LENGTH)
-    model = km.getLSTMmodel(embedding_layer, numLabels, MAX_SEQUENCE_LENGTH=1000)
-    # model = km.otherLSTM(embedding_layer, numLabels, MAX_SEQUENCE_LENGTH)
 
-    callBackName = "{}_{}_{}-{}-{}-{}:{}:{}".format( 
-        args.corpus, args.embedding_type, localtime().tm_year, localtime().tm_mon, 
-        localtime().tm_mday, localtime().tm_hour, localtime().tm_min, localtime().tm_sec)
+    if args.restore & (os.path.isfile(modelName)):
+        print "Restoring last instance of Model : ", modelName
+        model = keras.models.load_model(modelName)
+    else :
 
-    tensorboard = TensorBoard( log_dir="logs/"+callBackName,
-        write_graph=False, histogram_freq=1, write_grads=True
-        )
+        print "Creating Model : ", modelName
 
-    checkPoint = ModelCheckpoint(
-        "checkPoints/"+callBackName,
-        monitor='val_acc',
-        verbose=0,
-        save_best_only=True,
-        save_weights_only=False,
-        mode='auto',
-        period=1
-        )
+        corpusA = corpus(args.corpus, MAX_NUM_WORDS, MAX_SEQUENCE_LENGTH, VALIDATION_SPLIT, TEST_SPLIT)
+        numLabels = len(corpusA.y_train[0]) # labels are in cathegorical shape, this is the number of clases
 
-    earlyStopping = EarlyStopping(
-        monitor='val_acc',
-        min_delta=0,
-        patience=15,
-        verbose=0,
-        mode='auto',
-        baseline=None,
-        restore_best_weights=True
-        )
+                embedding_layer = getEmbeddingLayer(args.embedding_type, corpusA, MAX_NUM_WORDS, EMBEDDING_DIM)
 
+        # model = km.getConvModel(embedding_layer, numLabels, MAX_SEQUENCE_LENGTH)
+        model = km.getLSTMmodel(embedding_layer, numLabels, MAX_SEQUENCE_LENGTH=1000)
+        # model = km.otherLSTM(embedding_layer, numLabels, MAX_SEQUENCE_LENGTH)
+
+
+        callBackName = "{}_{}_{}-{}-{}-{}:{}:{}".format( 
+            args.corpus, args.embedding_type, localtime().tm_year, localtime().tm_mon, 
+            localtime().tm_mday, localtime().tm_hour, localtime().tm_min, localtime().tm_sec)
+
+        tensorboard = TensorBoard( log_dir="logs/"+callBackName,
+            write_graph=False, histogram_freq=1, write_grads=True
+            )
+
+        checkPoint = ModelCheckpoint(
+            "checkPoints/"+callBackName,
+            monitor='val_acc',
+            verbose=0,
+            save_best_only=True,
+            save_weights_only=False,
+            mode='auto',
+            period=1
+            )
+
+        earlyStopping = EarlyStopping(
+            monitor='val_acc',
+            min_delta=0,
+            patience=15,
+            verbose=0,
+            mode='auto',
+            baseline=None,
+            restore_best_weights=False
+            )
 
 
 
@@ -158,8 +171,9 @@ def main():
               batch_size=18,
               epochs=EPOCHS,
               validation_data=(corpusA.x_test, corpusA.y_test),
-              callbacks=[tensorboard, checkPoint, earlyStopping])
+              callbacks=[tensorboard, checkPoint])
 
+    model.save(modelName)
 
 
 
@@ -197,6 +211,9 @@ if __name__ == "__main__":
                         action="store_true")
     
     parser.add_argument("--logNormal", help="utilize log-Normalization in smh word-vector embeddings", 
+                        action="store_true")
+
+    parser.add_argument("--restore", help="restore Keras model from latest training moment", 
                         action="store_true")
 
     args = parser.parse_args()
