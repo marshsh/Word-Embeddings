@@ -62,6 +62,10 @@ def getEmbeddingLayer(embedding_type, corpus, MAX_NUM_WORDS=20000, EMBEDDING_DIM
         embeddings_dic = embeddings.smh_get_embeddings( args.filePrefix, reCalculate=args.reCalculate)
     elif embedding_type == "smh_logNormal":
         embeddings_dic = embeddings.smh_get_embeddings( args.filePrefix, reCalculate=args.reCalculate, logNormal=True)
+    elif embedding_type == "topicAvg":
+        embeddings_dic = embeddings.topicAvg_get_embeddings(args.filePrefix, args.corpus, reCalculate=args.reCalculate)
+
+
     elif embedding_type == 'contextVec':
         embeddings_dic = embeddings.contextSMH_get_embeddings( args.filePrefix, args.size, reCalculate=args.reCalculate)
     elif embedding_type == 'contextVec_logNormal':
@@ -71,9 +75,9 @@ def getEmbeddingLayer(embedding_type, corpus, MAX_NUM_WORDS=20000, EMBEDDING_DIM
     elif embedding_type == "glove+contextVec_logNormal":
         embeddings_dic = embeddings.glove_and_context_embeddings( args.filePrefix, args.size, reCalculate=args.reCalculate, logNormal=True)
     elif embedding_type == "w2v+smh":
-        embeddings_dic = embeddings.smh_and_word2vec_embeddings( args.filePrefix, args.size, reCalculate=args.reCalculate)
+        embeddings_dic = embeddings.smh_and_word2vec_embeddings( args.filePrefix, args.corpus, reCalculate=args.reCalculate)
     elif embedding_type == "w2v+smh_logNormal":
-        embeddings_dic = embeddings.smh_and_word2vec_embeddings( args.filePrefix, args.size, reCalculate=args.reCalculate, logNormal=True)
+        embeddings_dic = embeddings.smh_and_word2vec_embeddings( args.filePrefix, args.corpus, reCalculate=args.reCalculate, logNormal=True)
 
     elif embedding_type == 'oneH':
         # embeddings_dic = 
@@ -205,7 +209,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument("embedding_type", choices=['smh', 'oneH', 'w2v', 'glove',
-                        'contextVec', 'w2v+smh', 'w2v+contextVec', 'glove+contextVec'], 
+                        'contextVec', 'w2v+smh', 'topicAvg', 'w2v+contextVec', 'glove+contextVec'], 
                         help="Type of word representation used to train the model.")
     parser.add_argument("corpus", choices=[ '20NG', '20ng', 'r', 'reuters', 'w', 'wiki', 'wikipedia'],
                         help="Corpus to be used")

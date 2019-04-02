@@ -149,6 +149,8 @@ def contextSMH_get_embeddings( filePrefix, windowSize = 5, reCalculate=False, lo
 
 	return embeddings_dic
 
+def topicAvg_get_embeddings(filePrefix, corpus, reCalculate=False):
+	return word_avg_from_topics_w2v(filePrefix, corpus, reCalculate=reCalculate)
 
 
 ###########################################################################################
