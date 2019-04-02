@@ -70,6 +70,11 @@ def getEmbeddingLayer(embedding_type, corpus, MAX_NUM_WORDS=20000, EMBEDDING_DIM
         embeddings_dic = embeddings.glove_and_context_embeddings( args.filePrefix, args.size, reCalculate=args.reCalculate)
     elif embedding_type == "glove+contextVec_logNormal":
         embeddings_dic = embeddings.glove_and_context_embeddings( args.filePrefix, args.size, reCalculate=args.reCalculate, logNormal=True)
+    elif embedding_type == "w2v+smh":
+        embeddings_dic = embeddings.smh_and_word2vec_embeddings( args.filePrefix, args.size, reCalculate=args.reCalculate)
+    elif embedding_type == "w2v+smh_logNormal":
+        embeddings_dic = embeddings.smh_and_word2vec_embeddings( args.filePrefix, args.size, reCalculate=args.reCalculate, logNormal=True)
+
     elif embedding_type == 'oneH':
         # embeddings_dic = 
         print "oneH in progress"
@@ -200,7 +205,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument("embedding_type", choices=['smh', 'oneH', 'w2v', 'glove',
-                        'contextVec', 'w2v+contextVec', 'glove+contextVec'], 
+                        'contextVec', 'w2v+smh', 'w2v+contextVec', 'glove+contextVec'], 
                         help="Type of word representation used to train the model.")
     parser.add_argument("corpus", choices=[ '20NG', '20ng', 'r', 'reuters', 'w', 'wiki', 'wikipedia'],
                         help="Corpus to be used")
@@ -222,6 +227,7 @@ if __name__ == "__main__":
 
     if args.logNormal:
         args.embedding_type += "_logNormal"
+        print "Using _logNormal smh embeddings."
 
 
     # Adding file-prefix to have a well organized way of saving pre-calculated embeddings.
@@ -238,11 +244,9 @@ if __name__ == "__main__":
     if args.logNormal:
         filePrefix += '_logNorm'  #If you change this string '_logNorm' you have to change it in embeddings.smh_get_model() too
 
-    # Added filePrefix to args** just to make it more accesible. But it's not 
-    # a field users can fill.
     args.filePrefix = filePrefix
 
-    print "\n \n \n \n" + filePrefix
+    print "\n \n \n \n" + filePrefix + "\n \n"
 
 
     if args.size == None:

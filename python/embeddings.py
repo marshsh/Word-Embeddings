@@ -64,10 +64,6 @@ def word2vec_get_embeddings( filePrefix, corpus, full=False, reCalculate=False )
 	"""
 	print '*** word2vec_get_embeddings ***'
 
-	if  os.path.exists(filePrefix + '.w2vReduced') and not reCalculate :
-		reducedW2V = loadPickle(filePrefix + '.w2vReduced' )
-		return reducedW2V
-
 	print 'loading w2v model ...'
 	model = gensim.models.KeyedVectors.load_word2vec_format('./3rdParty/word2vec300/word2vec300.bin', binary=True)
 	print 'w2v model loaded.'
@@ -75,6 +71,14 @@ def word2vec_get_embeddings( filePrefix, corpus, full=False, reCalculate=False )
 	if full:
 		print 'returning original FULL w2v dictionary'
 		return model.wv
+
+
+
+	# Reducing the dictionary
+
+	if  os.path.exists(filePrefix + '.w2vReduced') and not reCalculate :
+		reducedW2V = loadPickle(filePrefix + '.w2vReduced' )
+		return reducedW2V
 
 
 	print 'Reducing w2v dictionay to vocabulary in corpus'
@@ -176,7 +180,15 @@ def glove_and_context_embeddings(filePrefix, windowSize = 5, reCalculate=False, 
 
 	return embeddings_dic
 
-def smh_and_word2vec_embeddings(filePrefix, windowSize = 5, reCalculate=False, logNormal=False ):
+def smh_and_word2vec_embeddings(filePrefix, corpus, reCalculate=False, logNormal=False):
+
+	replaceDic = word_avg_from_topics_w2v(filePrefix, corpus)
+
+	smh_vectors = smh_get_embeddings(filePrefix, reCalculate, logNormal=logNormal)
+
+	word2vec = word2vec_get_embeddings(filePrefix, corpus, full=True, reCalculate)
+
+	mix_2_embeddings(filePrefix, word2vec, smh_vectors, 'word2vec', 'smh', replaceDic)
 
 
 
@@ -313,14 +325,104 @@ def contextSMH(filePrefix, smhVectors, windowSize, logNormal=False ):
 
 
 
+##############################################################################
+# Mixing embeddings.
+
+
+def mix_2_embeddings(filePrefix, aaaa, bbbb, nameA, nameB, replaceDic):
+	"""
+	Ment to be used with bbbb = smh-based embedding.
+
+	Concatenate aaaa and bbbb embeddings, only for words present in bbbb.
+	In case the word is not in aaaa, we use the vector returned by the replaceFunc.
+	"""
+
+	if os.path.exists(filePrefix + '.' + nameA + '_and_' + nameB) and not reCalculate :
+		return loadPickle(filePrefix + '.' + nameA + '_and_' + nameB)
+
+	embeddings_dic = {}
+
+	sizeA = len(aaaa.itervalues().next())
+
+	for word in bbbb.keys():
+		if word in aaaa:
+			vector = aaaa[word]
+		else :
+			vector = replaceDic[word]
+			
+		embeddings_dic[word] = vector + bbbb[word]
+
+	dumpPickle(filePrefix + '.' + nameA + '_and_' + nameB, embeddings_dic )
+	return embeddings_dic
 
 
 
 
+def topic_avg_w2v(filePrefix, corpus, reCalculate=False):
+
+	if not reCalculate & os.path.exists(filePrefix + '.w2v_topic_avg'):
+		return loadPickle(filePrefix + '.w2v_topic_avg')
+
+	word2vec = word2vec_get_embeddings(filePrefix, corpus, full=True)
+
+	topicsRawPath = getFileExtension( filePrefix, '.topicsRaw')
+	model = smh.listdb_load(topicsRawPath)
+	vocpath = getFileExtension( filePrefix, '.vocab')
+	print "Loading vocabulary from", vocpath
+	vocabulary, docfreq = load_vocabulary(vocpath)
 
 
+	topic2vec_dic = {}
+
+	sizeW2V = len(word2vec.values().next())
+	for topicId in range(model.ldb.size):
+		vector = np.asarray([ 0.0 for x in range(sizeW2V) ])
+		freqTotal = 0
+
+		for itemInList in range( model.ldb[topicId].size ):
+			token = model.ldb[topicId][itemInList].item
+			freq = model.ldb[topicId][itemInList].freq
+			word = vocabulary[token]
+			if word not in word2vec:
+				continue
+			vector += np.asarray(word2vec[word])*freq
+			freqTotal += freq
+
+		vector = vector / freqTotal
+		topic2vec_dic[topicId] = vector.tolist()
+
+	dumpPickle(filePrefix + '.w2v_topic_avg', topic2vec_dic)
+
+	return topic2vec_dic
 
 
+def word_avg_from_topics_w2v(filePrefix, corpus, reCalculate=False):
+
+	if not reCalculate & os.path.exists(filePrefix + '.w2v_word_avg_from_topics'):
+		return loadPickle(filePrefix + '.w2v_word_avg_from_topics')
+
+	topic2vec_dic = topic_avg_w2v(filePrefix, corpus)
+	sizeTopicVec = len(topic2vec_dic.itervalues().next())
+
+	smh_dic = smh_get_embeddings( filePrefix, reCalculate=False, logNormal=False)
+
+	word_avg_from_topic_DIC = {}
+
+	for word, smhVector in smh_dic.items():
+		vector = np.asarray([ 0.0 for x in range(sizeTopicVec)])
+		freqTotal = 0
+
+		for i in range(len(smhVector)):
+			freq = smhVector[i]
+			freqTotal += freq
+			vector += topic2vec_dic[i]*freq
+		vector = vector / freqTotal
+
+		word_avg_from_topic_DIC[word] = vector.tolist()
+
+	dumpPickle(filePrefix + '.w2v_word_avg_from_topics', word_avg_from_topic_DIC)
+
+	return word_avg_from_topic_DIC
 
 
 
@@ -375,30 +477,4 @@ def getFileExtension( filePrefix, extension):
 			return filePath
 
 
-def mix_2_embeddings(filePrefix, aaaa, bbbb, nameA, nameB, replaceFunc):
-	"""
-	Concatenate aaaa and bbbb embeddings, only for words present in bbbb.
-	In case the word is not in aaaa, we use the vector returned by the replaceFunc.
-	"""
 
-	if os.path.exists(filePrefix + '.' + nameA + '_and_' + nameB) and not reCalculate :
-		return loadPickle(filePrefix + '.' + nameA + '_and_' + nameB)
-
-
-	embeddings_dic = {}
-
-
-	sizeA = len(aaaa.itervalues().next())
-
-	for word in bbbb.keys():
-		if word in aaaa:
-			vector = aaaa[word]
-		else :
-			vector = replaceFunc(word)
-			
-		embeddings_dic[word] = vector + bbbb[word]
-
-
-	dumpPickle(filePrefix + '.' + nameA + '_and_' + nameB, embeddings_dic )
-
-	return embeddings_dic
