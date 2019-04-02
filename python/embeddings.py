@@ -10,7 +10,7 @@ from math import log1p
 from discovery.topics import load_vocabulary, save_topics, save_time, get_models_docfreq, sort_topics, listdb_to_topics
 
 
-def gloveEmbbedingDic():
+def glove_get_embeddings():
     """
     Returns dictionary with pre-trained word embbedings.
     glove.6B.2 must be downloaded to "pwd/3rdParty/glove.6B.2/glove.6B.100d.txt"
@@ -146,6 +146,11 @@ def contextSMH_get_embeddings( filePrefix, windowSize = 5, reCalculate=False, lo
 	return embeddings_dic
 
 
+
+###########################################################################################
+#  Mixed Embeddings
+
+
 def glove_and_context_embeddings(filePrefix, windowSize = 5, reCalculate=False, logNormal=False ):
 
 	if os.path.exists(filePrefix + '.glove_and_context') and not reCalculate :
@@ -170,6 +175,8 @@ def glove_and_context_embeddings(filePrefix, windowSize = 5, reCalculate=False, 
 	dumpPickle( filePrefix + '.glove_and_context', embeddings_dic )
 
 	return embeddings_dic
+
+def smh_and_word2vec_embeddings(filePrefix, windowSize = 5, reCalculate=False, logNormal=False ):
 
 
 
@@ -366,3 +373,32 @@ def getFileExtension( filePrefix, extension):
 			filePath = filePrefix + fileN
 			print "\n {} \n".format(filePath)
 			return filePath
+
+
+def mix_2_embeddings(filePrefix, aaaa, bbbb, nameA, nameB, replaceFunc):
+	"""
+	Concatenate aaaa and bbbb embeddings, only for words present in bbbb.
+	In case the word is not in aaaa, we use the vector returned by the replaceFunc.
+	"""
+
+	if os.path.exists(filePrefix + '.' + nameA + '_and_' + nameB) and not reCalculate :
+		return loadPickle(filePrefix + '.' + nameA + '_and_' + nameB)
+
+
+	embeddings_dic = {}
+
+
+	sizeA = len(aaaa.itervalues().next())
+
+	for word in bbbb.keys():
+		if word in aaaa:
+			vector = aaaa[word]
+		else :
+			vector = replaceFunc(word)
+			
+		embeddings_dic[word] = vector + bbbb[word]
+
+
+	dumpPickle(filePrefix + '.' + nameA + '_and_' + nameB, embeddings_dic )
+
+	return embeddings_dic

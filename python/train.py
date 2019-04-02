@@ -55,7 +55,7 @@ def getEmbeddingLayer(embedding_type, corpus, MAX_NUM_WORDS=20000, EMBEDDING_DIM
 
 
     if embedding_type == "glove":
-        embeddings_dic = embeddings.gloveEmbbedingDic()
+        embeddings_dic = embeddings.glove_get_embeddings()
     elif embedding_type == "w2v":
         embeddings_dic = embeddings.word2vec_get_embeddings(args.filePrefix, corpus, reCalculate=args.reCalculate)
     elif embedding_type == "smh":
