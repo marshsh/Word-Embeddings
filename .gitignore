@@ -118,6 +118,11 @@ records/
 
 logs/
 
+checkPoints/
+
+history/
+
+savedModels/
 
 
 

@@ -88,6 +88,22 @@ done
 # echo $TWENTYNG
 
 
+if [ ! -e `pwd`/logs ] ; then
+    mkdir `pwd`/logs
+fi
+
+if [ ! -e `pwd`/checkPoints ] ; then
+    mkdir `pwd`/checkPoints
+fi
+
+if [ ! -e `pwd`/history ] ; then
+    mkdir `pwd`/history
+fi
+
+if [ ! -e `pwd`/savedModels ] ; then
+    mkdir `pwd`/savedModels
+fi
+
 
 
 #####################################
