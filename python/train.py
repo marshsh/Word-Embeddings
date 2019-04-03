@@ -65,7 +65,6 @@ def getEmbeddingLayer(embedding_type, corpus, MAX_NUM_WORDS=20000, EMBEDDING_DIM
     elif embedding_type == "topicAvg":
         embeddings_dic = embeddings.topicAvg_get_embeddings(args.filePrefix, args.corpus, reCalculate=args.reCalculate)
 
-
     elif embedding_type == 'contextVec':
         embeddings_dic = embeddings.contextSMH_get_embeddings( args.filePrefix, args.size, reCalculate=args.reCalculate)
     elif embedding_type == 'contextVec_logNormal':
@@ -117,6 +116,13 @@ def getEmbeddingLayer(embedding_type, corpus, MAX_NUM_WORDS=20000, EMBEDDING_DIM
 
 
 
+    def getModel(model_type, embedding_layer, numLabels, MAX_SEQUENCE_LENGTH):
+        if model_type == "conv":
+            model = km.getConvModel(embedding_layer, numLabels, MAX_SEQUENCE_LENGTH=MAX_SEQUENCE_LENGTH)
+        if model_type == "conv+lstm":
+            model = km.getConvLSTMmodel(embedding_layer, numLabels, MAX_SEQUENCE_LENGTH=MAX_SEQUENCE_LENGTH)
+        if model_type == "lstm":
+            model = km.getLSTMmodel(embedding_layer, numLabels, MAX_SEQUENCE_LENGTH=MAX_SEQUENCE_LENGTH)
 
 
 
@@ -140,9 +146,7 @@ def main():
 
         embedding_layer = getEmbeddingLayer(args.embedding_type, corpusA, MAX_NUM_WORDS, EMBEDDING_DIM)
 
-        # model = km.getConvModel(embedding_layer, numLabels, MAX_SEQUENCE_LENGTH)
-        model = km.getLSTMmodel(embedding_layer, numLabels, MAX_SEQUENCE_LENGTH=1000)
-        # model = km.otherLSTM(embedding_layer, numLabels, MAX_SEQUENCE_LENGTH)
+        model = getModel(args.kerasModel, embedding_layer, numLabels, MAX_SEQUENCE_LENGTH)
 
 
         callBackName = "{}_{}_{}_::{}-{}-{}:{}:{}".format( 
@@ -210,23 +214,31 @@ if __name__ == "__main__":
 
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("embedding_type", choices=['smh', 'oneH', 'w2v', 'glove',
-                        'contextVec', 'w2v+smh', 'topicAvg', 'w2v+contextVec', 'glove+contextVec'], 
+    parser.add_argument("--embedding_type", "-et", "-e", 
+                        choices=['smh', 'oneH', 'w2v', 'glove', 'contextVec', 'w2v+smh', 'topicAvg', 'w2v+contextVec', 'glove+contextVec'], 
                         help="Type of word representation used to train the model.")
-    parser.add_argument("corpus", choices=[ '20NG', '20ng', 'r', 'reuters', 'w', 'wiki', 'wikipedia'],
-                        help="Corpus to be used")
+    parser.add_argument("--corpus", "-c", 
+                        choices=[ '20NG', '20ng', 'r', 'reuters', 'w', 'wiki', 'wikipedia'],
+                        help="Corpus to be used", 
+                        default='20ng')
+    parser.add_argument("--kerasModel", "-km", "-model", "-keras", 
+                        choices=['conv', 'lstm', 'conv+lstm'],
+                        help="Architecture of the neural network used to classify texts")
 
     parser.add_argument("--size", type=int)
 
     parser.add_argument("--name", type=str)
 
-    parser.add_argument("--reCalculate", help="re-calculate chosen word-vector embeddings", 
+    parser.add_argument("--reCalculate", 
+                        help="re-calculate chosen word-vector embeddings", 
                         action="store_true")
     
-    parser.add_argument("--logNormal", help="utilize log-Normalization in smh word-vector embeddings", 
+    parser.add_argument("--logNormal", 
+                        help="utilize log-Normalization in smh word-vector embeddings", 
                         action="store_true")
 
-    parser.add_argument("--restore", help="restore Keras model from latest training moment", 
+    parser.add_argument("--restore", 
+                        help="restore Keras model from latest training moment", 
                         action="store_true")
 
     args = parser.parse_args()
