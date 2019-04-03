@@ -145,8 +145,8 @@ def main():
         # model = km.otherLSTM(embedding_layer, numLabels, MAX_SEQUENCE_LENGTH)
 
 
-        callBackName = "{}_{}_{}-{}-{}-{}:{}:{}".format( 
-            args.corpus, args.embedding_type, localtime().tm_year, localtime().tm_mon, 
+        callBackName = "{}_{}_{}_::{}-{}-{}:{}:{}".format( 
+            args.corpus, args.embedding_type, args.name, localtime().tm_mon, 
             localtime().tm_mday, localtime().tm_hour, localtime().tm_min, localtime().tm_sec)
 
         tensorboard = TensorBoard( log_dir="logs/"+callBackName,
@@ -176,13 +176,15 @@ def main():
 
 
     print 'Training model.'
-    model.fit(corpusA.x_train, corpusA.y_train,
+    history = model.fit(corpusA.x_train, corpusA.y_train,
               batch_size=18,
               epochs=EPOCHS,
               validation_data=(corpusA.x_test, corpusA.y_test),
               callbacks=[tensorboard, checkPoint])
 
     model.save(modelName)
+    histName = os.path.join("history",callBackName)
+    embeddings.dumpPickle(histName, history)
 
 
 
@@ -215,6 +217,8 @@ if __name__ == "__main__":
                         help="Corpus to be used")
 
     parser.add_argument("--size", type=int)
+
+    parser.add_argument("--name", type=str)
 
     parser.add_argument("--reCalculate", help="re-calculate chosen word-vector embeddings", 
                         action="store_true")
@@ -249,6 +253,11 @@ if __name__ == "__main__":
         filePrefix += '_logNorm'  #If you change this string '_logNorm' you have to change it in embeddings.smh_get_model() too
 
     args.filePrefix = filePrefix
+
+    if not args.name:
+        args.name = ''
+
+    args.name = '(' + args.name + ')'
 
     print "\n \n \n \n" + filePrefix + "\n \n"
 
