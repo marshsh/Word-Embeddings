@@ -37,11 +37,11 @@ def smh_get_embeddings( filePrefix, reCalculate=False, logNormal=False):
 
 
 	# the SMH vectors have already been calculated and saved
-	if os.path.exists(filePrefix + '.smh_vectors') and not reCalculate :
+	if os.path.exists(filePrefix + '.smh_vectors') and (not reCalculate) :
 		return loadPickle(filePrefix + '.smh_vectors')
 
 	# the vectors have not been calculated, but the topic distribution have been saved
-	if os.path.exists(filePrefix + '.topicsRaw') and not reCalculate :
+	if os.path.exists(filePrefix + '.topicsRaw') and (not reCalculate) :
 		return smh_embeddings_from_model( filePrefix, logNormal=logNormal )
 
 
@@ -76,7 +76,7 @@ def word2vec_get_embeddings( filePrefix, corpus, full=False, reCalculate=False )
 
 	# Reducing the dictionary
 
-	if  os.path.exists(filePrefix + '.w2vReduced') and not reCalculate :
+	if  os.path.exists(filePrefix + '.w2vReduced') and (not reCalculate) :
 		reducedW2V = loadPickle(filePrefix + '.w2vReduced' )
 		return reducedW2V
 
@@ -97,7 +97,7 @@ def word2vec_get_embeddings( filePrefix, corpus, full=False, reCalculate=False )
 
 def contextSMH_get_embeddings( filePrefix, windowSize = 5, reCalculate=False, logNormal=False):
 
-	if os.path.exists(filePrefix + '.context' + '.' + str(windowSize)) and not reCalculate :
+	if os.path.exists(filePrefix + '.context' + '.' + str(windowSize)) and (not reCalculate) :
 		contextVec = loadPickle(filePrefix + '.context' + '.' + str(windowSize))
 		return contextVec
 
@@ -106,14 +106,14 @@ def contextSMH_get_embeddings( filePrefix, windowSize = 5, reCalculate=False, lo
 
 	# Load saved context vectors
 	if os.path.exists(filePrefix + '.ctxtBefore' + '.' + str(windowSize)) and \
-	  os.path.exists(filePrefix + '.ctxtBefore' + '.' + str(windowSize)) and not reCalculate :
+	  os.path.exists(filePrefix + '.ctxtBefore' + '.' + str(windowSize)) and (not reCalculate) :
 		print 'Loading contextVecBefore and ... \n'
 		contextVecBefore = loadPickle(filePrefix + '.ctxtBefore' + '.' + str(windowSize))
 		contextVecAfter = loadPickle(filePrefix + '.ctxtAfter' + '.' + str(windowSize))
 		# print contextVecBefore.keys()
 	else:
 		# the SMH vectors have already been calculated and saved, but CTXT vectors haven't
-		if os.path.exists(filePrefix + '.smh_vectors') and not reCalculate :
+		if os.path.exists(filePrefix + '.smh_vectors') and (not reCalculate) :
 			smhVectors = loadPickle(filePrefix + '.smh_vectors')
 		else :
 			print 'Loading smhVectors \n'
@@ -159,7 +159,7 @@ def topicAvg_get_embeddings(filePrefix, corpus, reCalculate=False):
 
 def glove_and_context_embeddings(filePrefix, windowSize = 5, reCalculate=False, logNormal=False ):
 
-	if os.path.exists(filePrefix + '.glove_and_context') and not reCalculate :
+	if os.path.exists(filePrefix + '.glove_and_context') and (not reCalculate) :
 		return loadPickle(filePrefix + '.glove_and_context')
 
 
@@ -339,7 +339,7 @@ def mix_2_embeddings(filePrefix, aaaa, bbbb, nameA, nameB, replaceDic):
 	In case the word is not in aaaa, we use the vector returned by the replaceFunc.
 	"""
 
-	if os.path.exists(filePrefix + '.' + nameA + '_and_' + nameB) and not reCalculate :
+	if os.path.exists(filePrefix + '.' + nameA + '_and_' + nameB) and (not reCalculate) :
 		return loadPickle(filePrefix + '.' + nameA + '_and_' + nameB)
 
 	embeddings_dic = {}
@@ -362,7 +362,7 @@ def mix_2_embeddings(filePrefix, aaaa, bbbb, nameA, nameB, replaceDic):
 
 def topic_avg_w2v(filePrefix, corpus, reCalculate=False):
 
-	if not reCalculate & os.path.exists(filePrefix + '.w2v_topic_avg'):
+	if (not reCalculate) & os.path.exists(filePrefix + '.w2v_topic_avg'):
 		return loadPickle(filePrefix + '.w2v_topic_avg')
 
 	word2vec = word2vec_get_embeddings(filePrefix, corpus, full=True)
