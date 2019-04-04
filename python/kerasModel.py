@@ -37,7 +37,7 @@ def getConvModel(embedding_layer, numLabels, MAX_SEQUENCE_LENGTH=1000):
 
 
 
-def getConvLSTMmodel(embedding_layer, numLabels, lstmN=128, convFilters=32 MAX_SEQUENCE_LENGTH=1000):
+def getConvLSTMmodel(embedding_layer, numLabels, lstmN=128, convFilters=32, MAX_SEQUENCE_LENGTH=1000):
 
     print "Compiling Keras LSTM model."
 
