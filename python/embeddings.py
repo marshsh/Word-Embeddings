@@ -400,7 +400,7 @@ def topic_avg_w2v(filePrefix, corpus, reCalculate=False):
 
 def word_avg_from_topics_w2v(filePrefix, corpus, reCalculate=False):
 
-	if not reCalculate & os.path.exists(filePrefix + '.w2v_word_avg_from_topics'):
+	if (not reCalculate) & os.path.exists(filePrefix + '.w2v_word_avg_from_topics'):
 		return loadPickle(filePrefix + '.w2v_word_avg_from_topics')
 
 	topic2vec_dic = topic_avg_w2v(filePrefix, corpus)
