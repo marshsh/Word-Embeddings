@@ -34,6 +34,7 @@ from tensorflow.keras.initializers import Constant
 
 import os
 import numpy as np
+import json
 
 # Our classes:
 import embeddings
@@ -60,22 +61,22 @@ def getEmbeddingLayer(embedding_type, corpus, MAX_NUM_WORDS=20000, EMBEDDING_DIM
         embeddings_dic = embeddings.word2vec_get_embeddings(args.filePrefix, corpus, reCalculate=args.reCalculate)
     elif embedding_type == "smh":
         embeddings_dic = embeddings.smh_get_embeddings( args.filePrefix, reCalculate=args.reCalculate)
-    elif embedding_type == "smh_logNormal":
+    elif embedding_type == "smh_logN":
         embeddings_dic = embeddings.smh_get_embeddings( args.filePrefix, reCalculate=args.reCalculate, logNormal=True)
     elif embedding_type == "topicAvg":
         embeddings_dic = embeddings.topicAvg_get_embeddings(args.filePrefix, args.corpus, reCalculate=args.reCalculate)
 
     elif embedding_type == 'contextVec':
         embeddings_dic = embeddings.contextSMH_get_embeddings( args.filePrefix, args.size, reCalculate=args.reCalculate)
-    elif embedding_type == 'contextVec_logNormal':
+    elif embedding_type == 'contextVec_logN':
         embeddings_dic = embeddings.contextSMH_get_embeddings( args.filePrefix, args.size, reCalculate=args.reCalculate, logNormal=True)
     elif embedding_type == "glove+contextVec":
         embeddings_dic = embeddings.glove_and_context_embeddings( args.filePrefix, args.size, reCalculate=args.reCalculate)
-    elif embedding_type == "glove+contextVec_logNormal":
+    elif embedding_type == "glove+contextVec_logN":
         embeddings_dic = embeddings.glove_and_context_embeddings( args.filePrefix, args.size, reCalculate=args.reCalculate, logNormal=True)
     elif embedding_type == "w2v+smh":
         embeddings_dic = embeddings.smh_and_word2vec_embeddings( args.filePrefix, args.corpus, reCalculate=args.reCalculate)
-    elif embedding_type == "w2v+smh_logNormal":
+    elif embedding_type == "w2v+smh_logN":
         embeddings_dic = embeddings.smh_and_word2vec_embeddings( args.filePrefix, args.corpus, reCalculate=args.reCalculate, logNormal=True)
 
     elif embedding_type == 'oneH':
@@ -131,7 +132,7 @@ def main():
 
     modelName = "./savedModels/{}_{}".format(args.corpus, args.embedding_type)
     if args.logNormal :
-        modelName += "_logNormal"
+        modelName += "_logN"
 
 
     if args.restore & (os.path.isfile(modelName)):
@@ -149,9 +150,9 @@ def main():
         model = getModel(args.kerasModel, embedding_layer, numLabels, MAX_SEQUENCE_LENGTH)
 
 
-        callBackName = "{}_{}_{}_::{}-{}-{}:{}:{}".format( 
-            args.corpus, args.embedding_type, args.name, localtime().tm_mon, 
-            localtime().tm_mday, localtime().tm_hour, localtime().tm_min, localtime().tm_sec)
+        callBackName = "{}__{}-{}--{}:{}".format( 
+            args.name, localtime().tm_mon, 
+            localtime().tm_mday, localtime().tm_hour, localtime().tm_min)
 
         tensorboard = TensorBoard( log_dir="logs/"+callBackName,
             write_graph=False, histogram_freq=1, write_grads=True
@@ -187,8 +188,10 @@ def main():
               callbacks=[tensorboard, checkPoint])
 
     model.save(modelName)
+
     histName = os.path.join("history",callBackName)
-    embeddings.dumpPickle(histName, history)
+    with open(histName,'w') as f:
+        json.dump(history, f)
 
 
 
@@ -223,7 +226,12 @@ if __name__ == "__main__":
                         default='20ng')
     parser.add_argument("--kerasModel", "-km", "-model", "-keras", 
                         choices=['conv', 'lstm', 'conv+lstm'],
+                        default='conv+lstm',
                         help="Architecture of the neural network used to classify texts")
+    
+    parser.add_argument("--convFilters", "-convF", type=int, default=32, help="Number of Conv1D Filters used in conv1D Keras Model")
+
+    parser.add_argument("--lstmNeurons", "-lstmN", "-lstm", type=int, default=128, help="Number of neurons in lstm layer of Keras Model")
 
     parser.add_argument("--size", type=int)
 
@@ -246,10 +254,12 @@ if __name__ == "__main__":
 
 
     if args.logNormal:
-        args.embedding_type += "_logNormal"
+        args.embedding_type += "_logN"
         print "Using _logNormal smh embeddings."
 
 
+
+# PREFIX fix
     # Adding file-prefix to have a well organized way of saving pre-calculated embeddings.
     filePrefix = 'data/'
     if args.corpus in ['20NG', '20ng']:
@@ -266,16 +276,27 @@ if __name__ == "__main__":
 
     args.filePrefix = filePrefix
 
+    print "\n \n \n \n" + filePrefix + "\n \n"
+
+
+
+
+# NAME fix
     if not args.name:
         args.name = ''
+    else :
+        args.name =  '(' + args.name + ')'
 
-    args.name = '(' + args.name + ')'
+    args.name = "{}_{}_{}_[{}-{}]_{}".format(args.corpus, args.embedding_type, 
+        args.kerasModel, args.convFilters, args.lstmNeurons, args.name)
 
-    print "\n \n \n \n" + filePrefix + "\n \n"
+
+
 
 
     if args.size == None:
         args.size = windowSize
+
 
     main()
 
