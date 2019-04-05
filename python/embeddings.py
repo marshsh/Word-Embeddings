@@ -85,7 +85,7 @@ def word2vec_get_embeddings( filePrefix, corpus, full=False, reCalculate=False )
 	reducedW2V = {}
 	for word, i in corpus.word_index.items():
 		if word in model.wv:
-			reducedW2V[word] = model.wv[word]
+			reducedW2V[word] = model.wv[word].tolist()
 		else :
 			reducedW2V[word] = [0 for x in range(300)]
 
@@ -373,24 +373,25 @@ def topic_avg_w2v(filePrefix, corpus, reCalculate=False):
 	print "Loading vocabulary from", vocpath
 	vocabulary, docfreq = load_vocabulary(vocpath)
 
-
 	topic2vec_dic = {}
 
-	sizeW2V = len(word2vec.values().next())
+	sizeW2V = word2vec.vector_size  # word2vec is a GENSIM keyedVector.
 	for topicId in range(model.ldb.size):
 		vector = np.asarray([ 0.0 for x in range(sizeW2V) ])
-		freqTotal = 0
+		numW = 0
 
 		for itemInList in range( model.ldb[topicId].size ):
 			token = model.ldb[topicId][itemInList].item
-			freq = model.ldb[topicId][itemInList].freq
+			# freq = model.ldb[topicId][itemInList].freq
 			word = vocabulary[token]
+
 			if word not in word2vec:
 				continue
-			vector += np.asarray(word2vec[word])*freq
-			freqTotal += freq
 
-		vector = vector / freqTotal
+			vector = word2vec[word]
+			numW += 1
+
+		vector = vector / numW
 		topic2vec_dic[topicId] = vector.tolist()
 
 	dumpPickle(filePrefix + '.w2v_topic_avg', topic2vec_dic)
