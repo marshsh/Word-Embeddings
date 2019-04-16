@@ -90,7 +90,7 @@ def word2vec_get_embeddings( filePrefix, corpus, full=False, reCalculate=False )
 			reducedW2V[word] = [0 for x in range(300)]
 
 
-	dumpPickle(filePrefix + '.w2vReduced' )
+	dumpPickle(filePrefix + '.w2vReduced', reducedW2V )
 	return reducedW2V
 
 
