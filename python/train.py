@@ -125,6 +125,7 @@ def getModel(model_type, embedding_layer, numLabels, MAX_SEQUENCE_LENGTH):
     if model_type == "lstm":
         model = km.getLSTMmodel(embedding_layer, numLabels, MAX_SEQUENCE_LENGTH=MAX_SEQUENCE_LENGTH)
 
+    return model
 
 
 def main():
