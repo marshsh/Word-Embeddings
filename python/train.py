@@ -117,13 +117,13 @@ def getEmbeddingLayer(embedding_type, corpus, MAX_NUM_WORDS=20000, EMBEDDING_DIM
 
 
 
-    def getModel(model_type, embedding_layer, numLabels, MAX_SEQUENCE_LENGTH):
-        if model_type == "conv":
-            model = km.getConvModel(embedding_layer, numLabels, MAX_SEQUENCE_LENGTH=MAX_SEQUENCE_LENGTH)
-        if model_type == "conv+lstm":
-            model = km.getConvLSTMmodel(embedding_layer, numLabels, MAX_SEQUENCE_LENGTH=MAX_SEQUENCE_LENGTH)
-        if model_type == "lstm":
-            model = km.getLSTMmodel(embedding_layer, numLabels, MAX_SEQUENCE_LENGTH=MAX_SEQUENCE_LENGTH)
+def getModel(model_type, embedding_layer, numLabels, MAX_SEQUENCE_LENGTH):
+    if model_type == "conv":
+        model = km.getConvModel(embedding_layer, numLabels, MAX_SEQUENCE_LENGTH=MAX_SEQUENCE_LENGTH)
+    if model_type == "conv+lstm":
+        model = km.getConvLSTMmodel(embedding_layer, numLabels, MAX_SEQUENCE_LENGTH=MAX_SEQUENCE_LENGTH)
+    if model_type == "lstm":
+        model = km.getLSTMmodel(embedding_layer, numLabels, MAX_SEQUENCE_LENGTH=MAX_SEQUENCE_LENGTH)
 
 
 
