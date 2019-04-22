@@ -156,7 +156,7 @@ def main(args):
 
 
         callBackName = "{}__{}-{}--{}:{}".format( 
-            args.name, localtime().tm_mon, 
+            args.nameBoard, localtime().tm_mon, 
             localtime().tm_mday, localtime().tm_hour, localtime().tm_min)
 
         tensorboard = TensorBoard( log_dir="logs/"+callBackName,
