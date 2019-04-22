@@ -129,8 +129,8 @@ def getModel(model_type, embedding_layer, numLabels, MAX_SEQUENCE_LENGTH):
 
 
 def getCorpus(args):
-    corpus.getCorpus(args.corpus, args.nameCorpus, MAX_NUM_WORDS, MAX_SEQUENCE_LENGTH, VALIDATION_SPLIT, TEST_SPLIT, args.reCalculate)
-
+    corpusA = corpus.getCorpus(args.corpus, args.nameCorpus, MAX_NUM_WORDS, MAX_SEQUENCE_LENGTH, VALIDATION_SPLIT, TEST_SPLIT, args.reCalculate)
+    return corpusA
 
 def main(args):
 
