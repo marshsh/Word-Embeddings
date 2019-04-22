@@ -200,22 +200,17 @@ def main():
 
 
 
+def preMain():
+"""
+With this method, you get the 'args' object you would've gotten had you run 
+this script directly with the corresponding options.
 
+USAGE:
+In python environment:
 
-if __name__ == "__main__":
-
-    EPOCHS = 100
-
-
-    MAX_SEQUENCE_LENGTH = 1000
-    MAX_NUM_WORDS = 20000
-    EMBEDDING_DIM = 100
-
-    VALIDATION_SPLIT = 0.2
-    TEST_SPLIT = 0.18
-
-    windowSize = 5
-
+import train
+args = train.preMain(["-e", "w2v", "-c", "20ng"])
+"""
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--embedding_type", "-et", "-e", 
@@ -303,10 +298,30 @@ if __name__ == "__main__":
 
 
 
-
     if args.size == None:
         args.size = windowSize
 
+
+
+    return args
+
+
+
+if __name__ == "__main__":
+
+    EPOCHS = 100
+
+
+    MAX_SEQUENCE_LENGTH = 1000
+    MAX_NUM_WORDS = 20000
+    EMBEDDING_DIM = 100
+
+    VALIDATION_SPLIT = 0.2
+    TEST_SPLIT = 0.18
+
+    windowSize = 5
+
+    args = preMain()
 
     main()
 
