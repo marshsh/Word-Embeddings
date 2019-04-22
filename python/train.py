@@ -318,14 +318,6 @@ def preMain(aaaargs=[]):
 
 
 
-if __name__ == "__main__":
-
-
-    args = preMain()
-
-    main(args)
-
-
 # Global Variables
 
 EPOCHS = 100
@@ -339,3 +331,13 @@ VALIDATION_SPLIT = 0.2
 TEST_SPLIT = 0.18
 
 windowSize = 5
+
+
+if __name__ == "__main__":
+
+
+    args = preMain()
+
+    main(args)
+
+
