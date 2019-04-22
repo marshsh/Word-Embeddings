@@ -417,8 +417,10 @@ def word_avg_from_topics_w2v(filePrefix, corpus, reCalculate=False):
 
 		for i in range(len(smhVector)):
 			freq = smhVector[i]
-			freqTotal += freq
-			vector += topic2vec_dic[i]*freq
+			if freq :
+				freqTotal += freq
+				w2vTopic = np.asarray(topic2vec_dic[i])
+				vector += w2vTopic*freq
 		vector = vector / max(1,freqTotal)
 
 		word_avg_from_topic_DIC[word] = vector.tolist()
