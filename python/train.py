@@ -38,7 +38,7 @@ import json
 
 # Our classes:
 import embeddings
-from corpus import corpus
+import corpus
 import kerasModel as km
 
 
@@ -143,7 +143,7 @@ def main():
 
         print "Creating Model : ", modelName
 
-        corpusA = corpus(args.corpus, MAX_NUM_WORDS, MAX_SEQUENCE_LENGTH, VALIDATION_SPLIT, TEST_SPLIT)
+        corpusA = corpus.getCorpus(args.corpus, args.nameCorpus, MAX_NUM_WORDS, MAX_SEQUENCE_LENGTH, VALIDATION_SPLIT, TEST_SPLIT)
         numLabels = len(corpusA.y_train[0]) # labels are in cathegorical shape, this is the number of clases
 
         embedding_layer = getEmbeddingLayer(args.embedding_type, corpusA, MAX_NUM_WORDS, EMBEDDING_DIM)
@@ -236,7 +236,9 @@ if __name__ == "__main__":
 
     parser.add_argument("--size", type=int)
 
-    parser.add_argument("--name", type=str)
+    parser.add_argument("--nameBoard", type=str)
+
+    parser.add_argument("--nameCorpus", type=str, default='')
 
     parser.add_argument("--reCalculate", 
                         help="re-calculate chosen word-vector embeddings", 
@@ -258,6 +260,13 @@ if __name__ == "__main__":
         args.embedding_type += "_logN"
         print "Using _logNormal smh embeddings."
 
+
+    if args.corpus in ['20NG','20ng']:
+        args.corpus = '20newsgroups'
+    if args.corpus in ['r', 'reuters']:
+        args.corpus = 'reuters'
+    if args.corpus in ['w', 'wiki', 'wikipedia']:
+        args.corpus = 'wikipedia'
 
 
 # PREFIX fix
@@ -283,13 +292,13 @@ if __name__ == "__main__":
 
 
 # NAME fix
-    if not args.name:
-        args.name = ''
+    if not args.nameBoard:
+        args.nameBoard = ''
     else :
-        args.name =  '(' + args.name + ')'
+        args.nameBoard =  '(' + args.nameBoard + ')'
 
-    args.name = "{}_{}_{}_[{}-{}]_{}".format(args.corpus, args.embedding_type, 
-        args.kerasModel, args.convFilters, args.lstmNeurons, args.name)
+    args.nameBoard = "{}_{}_{}_[{}-{}]_{}".format(args.corpus, args.embedding_type, 
+        args.kerasModel, args.convFilters, args.lstmNeurons, args.nameBoard)
 
 
 

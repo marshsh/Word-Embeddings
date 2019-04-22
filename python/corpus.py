@@ -42,14 +42,15 @@ from keras.preprocessing.text import Tokenizer
 from keras.preprocessing.sequence import pad_sequences
 from keras.utils import to_categorical
 
+import tools
 
 
 class corpus:
-    def __init__(self, nameC, 
+    def __init__(self, nameC, fileN, 
                  MAX_NUM_WORDS = 20000,
                  MAX_SEQUENCE_LENGTH = 1000,
                  num_valid = 0.2,
-                 num_test = 0.18
+                 num_test = 0.18,
                  ):
 
         self.loadCorpus(nameC)
@@ -57,6 +58,8 @@ class corpus:
         self.tokenise_and_pad(MAX_NUM_WORDS, MAX_SEQUENCE_LENGTH)
 
         self.split_data(num_valid, num_test)
+
+        tools.dumpPickle(fileN, self)
 
 
 
@@ -155,4 +158,32 @@ class corpus:
 	def streamData(self):
 		print 'a'
 
-		
+
+
+def getCorpus(self, nameC, extraName='', 
+                 MAX_NUM_WORDS = 20000,
+                 MAX_SEQUENCE_LENGTH = 1000,
+                 num_valid = 0.2,
+                 num_test = 0.18,
+                 reCalculate = False
+                 ):
+
+    fileName = nameC + extraName + ".ready"
+    fileN = os.path.join("data",nameC,fileName)
+
+    if (not reCalculate) & os.path.exists(file):
+        print "Loading corpus {}".format(nameC)
+        corpusA = tools.loadPickle(file)
+        print "Corpus loaded"
+        return corpusA
+
+    else :
+        print "Constructing corpus {}".format(nameC)
+        corpusA = corpus(nameC, fileN
+                 MAX_NUM_WORDS = 20000,
+                 MAX_SEQUENCE_LENGTH = 1000,
+                 num_valid = 0.2,
+                 num_test = 0.18,
+                 reCalculate = False)
+        print "Corpus constructed and saved"
+        return corpusA

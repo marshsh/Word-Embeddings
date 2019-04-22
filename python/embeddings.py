@@ -1,7 +1,7 @@
 import os
 import smh
 import numpy as np
-import pickle
+import tools
 import gensim
 
 from collections import Iterable
@@ -38,7 +38,7 @@ def smh_get_embeddings( filePrefix, reCalculate=False, logNormal=False):
 
 	# the SMH vectors have already been calculated and saved
 	if os.path.exists(filePrefix + '.smh_vectors') and (not reCalculate) :
-		return loadPickle(filePrefix + '.smh_vectors')
+		return tools.loadPickle(filePrefix + '.smh_vectors')
 
 	# the vectors have not been calculated, but the topic distribution have been saved
 	if os.path.exists(filePrefix + '.topicsRaw') and (not reCalculate) :
@@ -49,7 +49,7 @@ def smh_get_embeddings( filePrefix, reCalculate=False, logNormal=False):
 	smh_get_model(filePrefix)
 	smhVectors = smh_embeddings_from_model( filePrefix , logNormal=logNormal )
 
-	dumpPickle( filePrefix + '.smh_vectors', smhVectors )
+	tools.dumpPickle( filePrefix + '.smh_vectors', smhVectors )
 
 	return smhVectors
 
@@ -77,7 +77,7 @@ def word2vec_get_embeddings( filePrefix, corpus, full=False, reCalculate=False )
 	# Reducing the dictionary
 
 	if  os.path.exists(filePrefix + '.w2vReduced') and (not reCalculate) :
-		reducedW2V = loadPickle(filePrefix + '.w2vReduced' )
+		reducedW2V = tools.loadPickle(filePrefix + '.w2vReduced' )
 		return reducedW2V
 
 
@@ -90,7 +90,7 @@ def word2vec_get_embeddings( filePrefix, corpus, full=False, reCalculate=False )
 			reducedW2V[word] = [0 for x in range(300)]
 
 
-	dumpPickle(filePrefix + '.w2vReduced', reducedW2V )
+	tools.dumpPickle(filePrefix + '.w2vReduced', reducedW2V )
 	return reducedW2V
 
 
@@ -98,7 +98,7 @@ def word2vec_get_embeddings( filePrefix, corpus, full=False, reCalculate=False )
 def contextSMH_get_embeddings( filePrefix, windowSize = 5, reCalculate=False, logNormal=False):
 
 	if os.path.exists(filePrefix + '.context' + '.' + str(windowSize)) and (not reCalculate) :
-		contextVec = loadPickle(filePrefix + '.context' + '.' + str(windowSize))
+		contextVec = tools.loadPickle(filePrefix + '.context' + '.' + str(windowSize))
 		return contextVec
 
 
@@ -108,13 +108,13 @@ def contextSMH_get_embeddings( filePrefix, windowSize = 5, reCalculate=False, lo
 	if os.path.exists(filePrefix + '.ctxtBefore' + '.' + str(windowSize)) and \
 	  os.path.exists(filePrefix + '.ctxtBefore' + '.' + str(windowSize)) and (not reCalculate) :
 		print 'Loading contextVecBefore and ... \n'
-		contextVecBefore = loadPickle(filePrefix + '.ctxtBefore' + '.' + str(windowSize))
-		contextVecAfter = loadPickle(filePrefix + '.ctxtAfter' + '.' + str(windowSize))
+		contextVecBefore = tools.loadPickle(filePrefix + '.ctxtBefore' + '.' + str(windowSize))
+		contextVecAfter = tools.loadPickle(filePrefix + '.ctxtAfter' + '.' + str(windowSize))
 		# print contextVecBefore.keys()
 	else:
 		# the SMH vectors have already been calculated and saved, but CTXT vectors haven't
 		if os.path.exists(filePrefix + '.smh_vectors') and (not reCalculate) :
-			smhVectors = loadPickle(filePrefix + '.smh_vectors')
+			smhVectors = tools.loadPickle(filePrefix + '.smh_vectors')
 		else :
 			print 'Loading smhVectors \n'
 			smhVectors = smh_get_embeddings( filePrefix, reCalculate=reCalculate, logNormal=logNormal )
@@ -122,8 +122,8 @@ def contextSMH_get_embeddings( filePrefix, windowSize = 5, reCalculate=False, lo
 		print 'Calculating contextVecBefore \n'
 		contextVecBefore, contextVecAfter = contextSMH(filePrefix, smhVectors, windowSize, logNormal=logNormal)
 
-		dumpPickle(filePrefix + '.ctxtBefore' + '.' + str(windowSize), contextVecBefore )
-		dumpPickle(filePrefix + '.ctxtAfter' + '.' + str(windowSize), contextVecAfter )
+		tools.dumpPickle(filePrefix + '.ctxtBefore' + '.' + str(windowSize), contextVecBefore )
+		tools.dumpPickle(filePrefix + '.ctxtAfter' + '.' + str(windowSize), contextVecAfter )
 
 
 	# print ' \n Concatenation of embeddings.'
@@ -144,7 +144,7 @@ def contextSMH_get_embeddings( filePrefix, windowSize = 5, reCalculate=False, lo
 	print 'Embeddings concatenated. \n'
 
 
-	dumpPickle(filePrefix + '.context' + '.' + str(windowSize), embeddings_dic)
+	tools.dumpPickle(filePrefix + '.context' + '.' + str(windowSize), embeddings_dic)
 
 
 	return embeddings_dic
@@ -160,7 +160,7 @@ def topicAvg_get_embeddings(filePrefix, corpus, reCalculate=False):
 def glove_and_context_embeddings(filePrefix, windowSize = 5, reCalculate=False, logNormal=False ):
 
 	if os.path.exists(filePrefix + '.glove_and_context') and (not reCalculate) :
-		return loadPickle(filePrefix + '.glove_and_context')
+		return tools.loadPickle(filePrefix + '.glove_and_context')
 
 
 	glove = gloveEmbbedingDic()
@@ -178,7 +178,7 @@ def glove_and_context_embeddings(filePrefix, windowSize = 5, reCalculate=False, 
 		embeddings_dic[key] = np.concatenate([context[key] , extraV])
 
 
-	dumpPickle( filePrefix + '.glove_and_context', embeddings_dic )
+	tools.dumpPickle( filePrefix + '.glove_and_context', embeddings_dic )
 
 	return embeddings_dic
 
@@ -246,7 +246,7 @@ def smh_embeddings_from_model( filePrefix, logNormal=False ):
 
 			smhVectors[word][topicId] = freq
 
-	# dumpPickle( filePrefix + '.smh_vectors', smhVectors ) # Already saving in calling method
+	# tools.dumpPickle( filePrefix + '.smh_vectors', smhVectors ) # Already saving in calling method
 
 	return smhVectors
 
@@ -312,8 +312,8 @@ def contextSMH(filePrefix, smhVectors, windowSize, logNormal=False ):
 								if contextVecBefore.get(word) != None:
 									contextVecBefore[word] = [ contextVecBefore[word][x] + smhVectors[line[ i-h ]][x] for x in range(sizeVectors)  ]
 				
-	# dumpPickle(contextVecBefore, filePrefix + '.ctxtBefore' + '.' + str(windowSize) )
-	# dumpPickle(contextVecAfter, filePrefix + '.ctxtAfter' + '.' + str(windowSize) )
+	# tools.dumpPickle(contextVecBefore, filePrefix + '.ctxtBefore' + '.' + str(windowSize) )
+	# tools.dumpPickle(contextVecAfter, filePrefix + '.ctxtAfter' + '.' + str(windowSize) )
 
 	if logNormal:
 		for word, vector in contextVecBefore.items():
@@ -340,7 +340,7 @@ def mix_2_embeddings(filePrefix, aaaa, bbbb, nameA, nameB, replaceDic):
 	"""
 
 	if os.path.exists(filePrefix + '.' + nameA + '_and_' + nameB) and (not reCalculate) :
-		return loadPickle(filePrefix + '.' + nameA + '_and_' + nameB)
+		return tools.loadPickle(filePrefix + '.' + nameA + '_and_' + nameB)
 
 	embeddings_dic = {}
 
@@ -354,7 +354,7 @@ def mix_2_embeddings(filePrefix, aaaa, bbbb, nameA, nameB, replaceDic):
 			
 		embeddings_dic[word] = vector + bbbb[word]
 
-	dumpPickle(filePrefix + '.' + nameA + '_and_' + nameB, embeddings_dic )
+	tools.dumpPickle(filePrefix + '.' + nameA + '_and_' + nameB, embeddings_dic )
 	return embeddings_dic
 
 
@@ -363,7 +363,7 @@ def mix_2_embeddings(filePrefix, aaaa, bbbb, nameA, nameB, replaceDic):
 def topic_avg_w2v(filePrefix, corpus, reCalculate=False):
 
 	if (not reCalculate) & os.path.exists(filePrefix + '.w2v_topic_avg'):
-		return loadPickle(filePrefix + '.w2v_topic_avg')
+		return tools.loadPickle(filePrefix + '.w2v_topic_avg')
 
 	word2vec = word2vec_get_embeddings(filePrefix, corpus, full=True)
 
@@ -394,7 +394,7 @@ def topic_avg_w2v(filePrefix, corpus, reCalculate=False):
 		vector = vector / numW
 		topic2vec_dic[topicId] = vector.tolist()
 
-	dumpPickle(filePrefix + '.w2v_topic_avg', topic2vec_dic)
+	tools.dumpPickle(filePrefix + '.w2v_topic_avg', topic2vec_dic)
 
 	return topic2vec_dic
 
@@ -402,7 +402,7 @@ def topic_avg_w2v(filePrefix, corpus, reCalculate=False):
 def word_avg_from_topics_w2v(filePrefix, corpus, reCalculate=False):
 
 	if (not reCalculate) & os.path.exists(filePrefix + '.w2v_word_avg_from_topics'):
-		return loadPickle(filePrefix + '.w2v_word_avg_from_topics')
+		return tools.loadPickle(filePrefix + '.w2v_word_avg_from_topics')
 
 	topic2vec_dic = topic_avg_w2v(filePrefix, corpus)
 	sizeTopicVec = len(topic2vec_dic.itervalues().next())
@@ -419,11 +419,11 @@ def word_avg_from_topics_w2v(filePrefix, corpus, reCalculate=False):
 			freq = smhVector[i]
 			freqTotal += freq
 			vector += topic2vec_dic[i]*freq
-		vector = vector / freqTotal
+		vector = vector / max(1,freqTotal)
 
 		word_avg_from_topic_DIC[word] = vector.tolist()
 
-	dumpPickle(filePrefix + '.w2v_word_avg_from_topics', word_avg_from_topic_DIC)
+	tools.dumpPickle(filePrefix + '.w2v_word_avg_from_topics', word_avg_from_topic_DIC)
 
 	return word_avg_from_topic_DIC
 
@@ -448,20 +448,6 @@ def word_avg_from_topics_w2v(filePrefix, corpus, reCalculate=False):
 # 			val = line[1:]
 # 			dic[key] = val
 # 	return dic
-
-
-
-def dumpPickle(fileName, dic):
-	pickle_out = open(fileName,"w")
-	pickle.dump(dic, pickle_out)
-	pickle_out.close()
-
-def loadPickle(fileName):
-	print 'Loading Pickle :  ' + fileName
-	pickle_in = open(fileName,"r")
-	dic = pickle.load(pickle_in)
-	print 'Loading completed ... \n'
-	return dic
 
 
 
