@@ -192,11 +192,13 @@ def main(args):
               validation_data=(corpusA.x_test, corpusA.y_test),
               callbacks=[tensorboard, checkPoint])
 
+    history_dic = history.history
+
     model.save(modelName)
 
     histName = os.path.join("history",callBackName)
     with open(histName,'w') as f:
-        json.dump(history, f)
+        json.dump(history_dic, f)
 
 
 
