@@ -434,22 +434,6 @@ def word_avg_from_topics_w2v(filePrefix, corpus, reCalculate=False):
 # Usefull functions
 
 
-# def saveDic(dic,fileName):
-# 	with open(fileName, 'w') as f:
-# 		for key, val in dic.items():
-# 			f.write( [key, val] )
-
-
-# def loadDic(fileName):
-# 	dic = {}
-# 	with open(fileName, 'r') as f:
-# 		for line in f.readlines():
-# 			key = line[0]
-# 			val = line[1:]
-# 			dic[key] = val
-# 	return dic
-
-
 
 
 

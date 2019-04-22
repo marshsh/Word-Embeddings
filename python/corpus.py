@@ -69,7 +69,7 @@ class corpus:
 
         print "Loading he corpus: ", nameC
 
-        if nameC in ['20NG','20ng']:
+        if nameC in ['20NG','20ng','20newsgroups']:
             self.load20NG()
         elif nameC in ['reuters','r']:
             self.loadReuters()
@@ -160,7 +160,7 @@ class corpus:
 
 
 
-def getCorpus(self, nameC, extraName='', 
+def getCorpus(nameC, extraName='', 
                  MAX_NUM_WORDS = 20000,
                  MAX_SEQUENCE_LENGTH = 1000,
                  num_valid = 0.2,
@@ -171,19 +171,19 @@ def getCorpus(self, nameC, extraName='',
     fileName = nameC + extraName + ".ready"
     fileN = os.path.join("data",nameC,fileName)
 
-    if (not reCalculate) & os.path.exists(file):
+    if (not reCalculate) & os.path.exists(fileN):
         print "Loading corpus {}".format(nameC)
-        corpusA = tools.loadPickle(file)
+        corpusA = tools.loadPickle(fileN)
         print "Corpus loaded"
         return corpusA
 
     else :
         print "Constructing corpus {}".format(nameC)
-        corpusA = corpus(nameC, fileN
+        corpusA = corpus(nameC, fileN,
                  MAX_NUM_WORDS = 20000,
                  MAX_SEQUENCE_LENGTH = 1000,
                  num_valid = 0.2,
-                 num_test = 0.18,
-                 reCalculate = False)
+                 num_test = 0.18
+                 )
         print "Corpus constructed and saved"
         return corpusA

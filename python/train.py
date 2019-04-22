@@ -128,7 +128,11 @@ def getModel(model_type, embedding_layer, numLabels, MAX_SEQUENCE_LENGTH):
     return model
 
 
-def main():
+def getCorpus(args):
+    corpus.getCorpus(args.corpus, args.nameCorpus, MAX_NUM_WORDS, MAX_SEQUENCE_LENGTH, VALIDATION_SPLIT, TEST_SPLIT, args.reCalculate)
+
+
+def main(args):
 
 
     modelName = "./savedModels/{}_{}".format(args.corpus, args.embedding_type)
@@ -143,7 +147,7 @@ def main():
 
         print "Creating Model : ", modelName
 
-        corpusA = corpus.getCorpus(args.corpus, args.nameCorpus, MAX_NUM_WORDS, MAX_SEQUENCE_LENGTH, VALIDATION_SPLIT, TEST_SPLIT)
+        corpusA = getCorpus(args)
         numLabels = len(corpusA.y_train[0]) # labels are in cathegorical shape, this is the number of clases
 
         embedding_layer = getEmbeddingLayer(args.embedding_type, corpusA, MAX_NUM_WORDS, EMBEDDING_DIM)
@@ -200,17 +204,17 @@ def main():
 
 
 
-def preMain():
-"""
-With this method, you get the 'args' object you would've gotten had you run 
-this script directly with the corresponding options.
+def preMain(aaaargs=[]):
+    """
+    With this method, you get the 'args' object you would've gotten had you run 
+    this script directly with the corresponding options.
 
-USAGE:
-In python environment:
+    USAGE:
+    In python environment:
 
-import train
-args = train.preMain(["-e", "w2v", "-c", "20ng"])
-"""
+    import train
+    args = train.preMain(["-e", "w2v", "-c", "20ng"])
+    """
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--embedding_type", "-et", "-e", 
@@ -247,8 +251,13 @@ args = train.preMain(["-e", "w2v", "-c", "20ng"])
                         help="restore Keras model from latest training moment", 
                         action="store_true")
 
-    args = parser.parse_args()
-    print "Training ", args.corpus, "with ", args.embedding_type, " embbedings"
+
+    if aaaargs:
+        args = parser.parse_args(aaaargs)
+    else :
+        args = parser.parse_args()
+
+    print " \n Training ", args.corpus, "with ", args.embedding_type, " embbedings"
 
 
     if args.logNormal:
@@ -267,7 +276,7 @@ args = train.preMain(["-e", "w2v", "-c", "20ng"])
 # PREFIX fix
     # Adding file-prefix to have a well organized way of saving pre-calculated embeddings.
     filePrefix = 'data/'
-    if args.corpus in ['20NG', '20ng']:
+    if args.corpus in ['20NG', '20ng', '20newsgroups']:
         filePrefix = os.path.join(filePrefix, '20newsgroups', '20newsgroups')
     elif args.corpus in ['r', 'reuters']:
         filePrefix = os.path.join(filePrefix, 'reuters', 'reuters')
@@ -309,19 +318,22 @@ args = train.preMain(["-e", "w2v", "-c", "20ng"])
 
 if __name__ == "__main__":
 
-    EPOCHS = 100
-
-
-    MAX_SEQUENCE_LENGTH = 1000
-    MAX_NUM_WORDS = 20000
-    EMBEDDING_DIM = 100
-
-    VALIDATION_SPLIT = 0.2
-    TEST_SPLIT = 0.18
-
-    windowSize = 5
 
     args = preMain()
 
-    main()
+    main(args)
 
+
+# Global Variables
+
+EPOCHS = 100
+
+
+MAX_SEQUENCE_LENGTH = 1000
+MAX_NUM_WORDS = 20000
+EMBEDDING_DIM = 100
+
+VALIDATION_SPLIT = 0.2
+TEST_SPLIT = 0.18
+
+windowSize = 5
