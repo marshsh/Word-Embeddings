@@ -193,6 +193,17 @@ def smh_and_word2vec_embeddings(filePrefix, corpus, reCalculate=False, logNormal
 	mix_2_embeddings(filePrefix, word2vec, smh_vectors, 'word2vec', 'smh', replaceDic)
 
 
+def w2v_and_topicAvg_embeddings(filePrefix, corpus, reCalculate=False, logNormal=False):
+
+	wordTopics = word_avg_from_topics_w2v(filePrefix, corpus)
+
+	replaceDic = wordTopics
+
+	word2vec = word2vec_get_embeddings(filePrefix, corpus, full=True, reCalculate=reCalculate)
+
+	mix_2_embeddings(filePrefix, word2vec, wordTopics, 'word2vec', 'wordTopics', replaceDic)
+
+
 
 #################################################################################################
 # SMH Vectors
@@ -356,6 +367,7 @@ def mix_2_embeddings(filePrefix, aaaa, bbbb, nameA, nameB, replaceDic):
 
 	tools.dumpPickle(filePrefix + '.' + nameA + '_and_' + nameB, embeddings_dic )
 	return embeddings_dic
+
 
 
 
