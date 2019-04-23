@@ -188,7 +188,7 @@ def smh_and_word2vec_embeddings(filePrefix, corpus, reCalculate=False, logNormal
 
 	smh_vectors = smh_get_embeddings(filePrefix, reCalculate, logNormal=logNormal)
 
-	word2vec = word2vec_get_embeddings(filePrefix, corpus, full=True, reCalculate=reCalculate)
+	word2vec = word2vec_get_embeddings(filePrefix, corpus, reCalculate=reCalculate)
 
 	mix_2_embeddings(filePrefix, word2vec, smh_vectors, 'word2vec', 'smh', replaceDic)
 
