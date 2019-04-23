@@ -78,12 +78,16 @@ def getEmbeddingLayer(embedding_type, corpus, MAX_NUM_WORDS=20000, EMBEDDING_DIM
         embeddings_dic = embeddings.smh_and_word2vec_embeddings( args.filePrefix, args.corpus, reCalculate=args.reCalculate)
     elif embedding_type == "w2v+smh_logN":
         embeddings_dic = embeddings.smh_and_word2vec_embeddings( args.filePrefix, args.corpus, reCalculate=args.reCalculate, logNormal=True)
+    elif embedding_type == 'w2v+topicAvg':
+        embeddings_dic = embeddings.w2v_and_topicAvg_embeddings( args.filePrefix, args.corpus, reCalculate=args.reCalculate)
 
     elif embedding_type == 'oneH':
         # embeddings_dic = 
         print "oneH in progress"
     else :
         print "Embbeding type not supported yet."
+
+
 
 
 
@@ -220,7 +224,9 @@ def preMain(aaaargs=[]):
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--embedding_type", "-et", "-e", 
-                        choices=['smh', 'oneH', 'w2v', 'glove', 'contextVec', 'w2v+smh', 'topicAvg', 'w2v+contextVec', 'glove+contextVec'], 
+                        choices=['smh', 'oneH', 'w2v', 'glove', 'contextVec', 'topicAvg', 
+                        'w2v+smh', 'w2v+contextVec', 'glove+contextVec', 'w2v+topicAvg'], 
+
                         help="Type of word representation used to train the model.")
     parser.add_argument("--corpus", "-c", 
                         choices=[ '20NG', '20ng', 'r', 'reuters', 'w', 'wiki', 'wikipedia'],
