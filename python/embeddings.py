@@ -345,7 +345,7 @@ def contextSMH(filePrefix, smhVectors, windowSize, logNormal=False ):
 # Mixing embeddings.
 
 
-def mix_2_embeddings(filePrefix, aaaa, bbbb, nameA, nameB, replaceDic):
+def mix_2_embeddings(filePrefix, aaaa, bbbb, nameA, nameB, replaceDic, reCalculate=False):
 	"""
 	Ment to be used with bbbb = smh-based embedding.
 
