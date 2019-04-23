@@ -199,7 +199,7 @@ def w2v_and_topicAvg_embeddings(filePrefix, corpus, reCalculate=False, logNormal
 
 	replaceDic = wordTopics
 
-	word2vec = word2vec_get_embeddings(filePrefix, corpus, full=True, reCalculate=reCalculate)
+	word2vec = word2vec_get_embeddings(filePrefix, corpus, reCalculate=reCalculate)
 
 	mix_2_embeddings(filePrefix, word2vec, wordTopics, 'word2vec', 'wordTopics', replaceDic)
 
