@@ -95,6 +95,7 @@ def word2vec_get_embeddings( filePrefix, corpus, full=False, reCalculate=False )
 
 
 
+
 def contextSMH_get_embeddings( filePrefix, windowSize = 5, reCalculate=False, logNormal=False):
 
 	if os.path.exists(filePrefix + '.context' + '.' + str(windowSize)) and (not reCalculate) :
@@ -203,7 +204,13 @@ def w2v_and_topicAvg_embeddings(filePrefix, corpus, reCalculate=False, logNormal
 
 	word2vec = word2vec_get_embeddings(filePrefix, corpus, reCalculate=reCalculate)
 
-	embeddings_dic = mix_2_embeddings(filePrefix, word2vec, wordTopics, 'word2vec', 'wordTopics', replaceDic)
+	embeddings_dic = {}
+
+	for word in wordTopics.keys():
+		vectorTopic = np.asarray(wordTopics[word])
+		vectorW2V = np.asarray(word2vec[word])
+		vector = (vectorTopic + vectorW2V).tolist()
+		embeddings_dic[word] = vector
 
 	return embeddings_dic
 
