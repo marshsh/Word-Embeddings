@@ -75,9 +75,10 @@ def word2vec_get_embeddings( filePrefix, corpus, full=False, reCalculate=False )
 
 
 	# Reducing the dictionary
+	fileName = getFileExtension(filePrefix,'.w2vReduced')
 
-	if  os.path.exists(filePrefix + '.w2vReduced') and (not reCalculate) :
-		reducedW2V = tools.loadPickle(filePrefix + '.w2vReduced' )
+	if  fileName and (not reCalculate) :
+		reducedW2V = tools.loadPickle(fileName)
 		return reducedW2V
 
 
