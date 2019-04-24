@@ -326,7 +326,7 @@ def preMain(aaaargs=[]):
 
 # Global Variables
 
-EPOCHS = 35
+EPOCHS = 100
 
 
 MAX_SEQUENCE_LENGTH = 1000
