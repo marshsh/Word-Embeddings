@@ -222,7 +222,11 @@ def w2v_and_topicAvg_embeddings(filePrefix, corpus, reCalculate=False, logNormal
 
 	for word in wordTopics.keys():
 		vectorTopic = np.asarray(wordTopics[word])
-		vectorW2V = np.asarray(word2vec[word])
+		if word in word2vec:
+			vectorW2V = np.asarray(word2vec[word])
+		else :
+			vectorW2V = np.asarray(wordTopics[word])
+					
 		vector = (vectorTopic + vectorW2V).tolist()
 		embeddings_dic[word] = vector
 

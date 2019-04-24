@@ -40,7 +40,7 @@ import json
 import embeddings
 import corpus
 import kerasModel as km
-
+import docsKerasModel as docsKM
 
 from time import time, localtime
 from tensorflow.python.keras.callbacks import TensorBoard, ModelCheckpoint, EarlyStopping
@@ -127,7 +127,7 @@ def getEmbeddingLayer(embedding_type, corpus, MAX_NUM_WORDS=20000, EMBEDDING_DIM
 
 
 
-def getModel(model_type, embedding_layer, numLabels, MAX_SEQUENCE_LENGTH):
+def getWordsModel(model_type, embedding_layer, numLabels, MAX_SEQUENCE_LENGTH):
     if model_type == "conv":
         model = km.getConvModel(embedding_layer, numLabels, MAX_SEQUENCE_LENGTH=MAX_SEQUENCE_LENGTH)
     if model_type == "conv+lstm":
@@ -160,9 +160,13 @@ def main(args):
         corpusA = getCorpus(args)
         numLabels = len(corpusA.y_train[0]) # labels are in cathegorical shape, this is the number of clases
 
-        embedding_layer = getEmbeddingLayer(args.embedding_type, corpusA, MAX_NUM_WORDS, EMBEDDING_DIM)
 
-        model = getModel(args.kerasModel, embedding_layer, numLabels, MAX_SEQUENCE_LENGTH)
+        if args.wordEmb :
+            embedding_layer = getEmbeddingLayer(args.embedding_type, corpusA, MAX_NUM_WORDS, EMBEDDING_DIM)
+            model = getWordsModel(args.kerasModel, embedding_layer, numLabels, MAX_SEQUENCE_LENGTH)
+        elif args.docEmb :
+            model = docsKM.getDocsModel()
+
 
 
         callBackName = "{}__{}-{}--{}:{}".format( 
