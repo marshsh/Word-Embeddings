@@ -196,6 +196,19 @@ def smh_and_word2vec_embeddings(filePrefix, corpus, reCalculate=False, logNormal
 	return embeddings_dic
 
 
+def context_and_word2vec_embeddings(filePrefix, corpus, reCalculate=False, logNormal=False):
+
+	replaceDic = word_avg_from_topics_w2v(filePrefix, corpus)
+
+	context_vectors = contextSMH_get_embeddings(filePrefix, reCalculate, logNormal=logNormal)
+
+	word2vec = word2vec_get_embeddings(filePrefix, corpus, reCalculate=reCalculate)
+
+	embeddings_dic = mix_2_embeddings(filePrefix, word2vec, context_vectors, 'word2vec', 'smh', replaceDic)
+
+	return embeddings_dic
+
+
 def w2v_and_topicAvg_embeddings(filePrefix, corpus, reCalculate=False, logNormal=False):
 
 	wordTopics = word_avg_from_topics_w2v(filePrefix, corpus)
