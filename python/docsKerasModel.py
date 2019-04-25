@@ -15,7 +15,7 @@ def getDocsModel(corpusA, model_type, numLabels, MAX_SEQUENCE_LENGTH):
 
 	first_embedding_layer = train.getEmbeddingLayer("w2v", corpusA, MAX_NUM_WORDS, EMBEDDING_DIM)
 
-	first = train.getWordsModel(model_type, first_embedding_layer, numLabels, MAX_SEQUENCE_LENGTH, , incomplete=True)
+	first = train.getWordsModel(model_type, first_embedding_layer, numLabels, MAX_SEQUENCE_LENGTH, incomplete=True)
 
 
 
