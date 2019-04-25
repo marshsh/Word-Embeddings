@@ -127,13 +127,13 @@ def getEmbeddingLayer(embedding_type, corpus, MAX_NUM_WORDS=20000, EMBEDDING_DIM
 
 
 
-def getWordsModel(model_type, embedding_layer, numLabels, MAX_SEQUENCE_LENGTH):
+def getWordsModel(model_type, embedding_layer, numLabels, MAX_SEQUENCE_LENGTH, incomplete):
     if model_type == "conv":
-        model = km.getConvModel(embedding_layer, numLabels, MAX_SEQUENCE_LENGTH=MAX_SEQUENCE_LENGTH)
+        model = km.getConvModel(embedding_layer, numLabels, MAX_SEQUENCE_LENGTH=MAX_SEQUENCE_LENGTH, incomplete=incomplete)
     if model_type == "conv+lstm":
-        model = km.getConvLSTMmodel(embedding_layer, numLabels, MAX_SEQUENCE_LENGTH=MAX_SEQUENCE_LENGTH)
+        model = km.getConvLSTMmodel(embedding_layer, numLabels, MAX_SEQUENCE_LENGTH=MAX_SEQUENCE_LENGTH, incomplete=incomplete)
     if model_type == "lstm":
-        model = km.getLSTMmodel(embedding_layer, numLabels, MAX_SEQUENCE_LENGTH=MAX_SEQUENCE_LENGTH)
+        model = km.getLSTMmodel(embedding_layer, numLabels, MAX_SEQUENCE_LENGTH=MAX_SEQUENCE_LENGTH, incomplete=incomplete)
 
     return model
 
@@ -161,11 +161,20 @@ def main(args):
         numLabels = len(corpusA.y_train[0]) # labels are in cathegorical shape, this is the number of clases
 
 
-        if args.wordEmb :
+
+
+
+# Spliting into two different types of neural network models. The ones intended for word embeddings and the 
+# ones intended for document embeddings.
+
+        if args.target == 'words' :
             embedding_layer = getEmbeddingLayer(args.embedding_type, corpusA, MAX_NUM_WORDS, EMBEDDING_DIM)
-            model = getWordsModel(args.kerasModel, embedding_layer, numLabels, MAX_SEQUENCE_LENGTH)
-        elif args.docEmb :
-            model = docsKM.getDocsModel()
+            model = getWordsModel(args.kerasModel, embedding_layer, numLabels, MAX_SEQUENCE_LENGTH, , incomplete=False)
+        elif args.target == 'docs' :
+            model = docsKM.getDocsModel(corpusA, )
+
+
+
 
 
 
@@ -233,6 +242,10 @@ def preMain(aaaargs=[]):
     """
 
     parser = argparse.ArgumentParser()
+    parser.add_argument("--target", "-t", 
+                        choices=['words','docs'], 
+                        help="Target object we want embeddings for.")
+
     parser.add_argument("--embedding_type", "-et", "-e", 
                         choices=['smh', 'oneH', 'w2v', 'glove', 'contextVec', 'topicAvg', 
                         'w2v+smh', 'w2v+contextVec', 'glove+contextVec', 'w2v+topicAvg', 'w2v+context'], 

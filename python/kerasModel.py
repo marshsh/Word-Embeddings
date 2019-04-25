@@ -37,7 +37,7 @@ def getConvModel(embedding_layer, numLabels, MAX_SEQUENCE_LENGTH=1000):
 
 
 
-def getConvLSTMmodel(embedding_layer, numLabels, lstmN=128, convFilters=32, MAX_SEQUENCE_LENGTH=1000):
+def getConvLSTMmodel(embedding_layer, numLabels, lstmN=128, convFilters=32, MAX_SEQUENCE_LENGTH=1000, incomplete=False):
 
     print "Compiling Keras LSTM model."
 
@@ -46,6 +46,10 @@ def getConvLSTMmodel(embedding_layer, numLabels, lstmN=128, convFilters=32, MAX_
     model.add(Conv1D(filters=convFilters, kernel_size=3, padding='same', activation='relu'))
     model.add(MaxPooling1D(pool_size=2))
     model.add(LSTM(lstmN))
+
+    if incomplete:
+        return model
+
     model.add(Dense(numLabels, activation='softmax'))
     model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
@@ -53,11 +57,16 @@ def getConvLSTMmodel(embedding_layer, numLabels, lstmN=128, convFilters=32, MAX_
     return model
 
 
-def getLSTMmodel(embedding_layer, numLabels,  lstmN=128, MAX_SEQUENCE_LENGTH=1000):
+def getLSTMmodel(embedding_layer, numLabels,  lstmN=128, MAX_SEQUENCE_LENGTH=1000, incomplete=False):
     model = Sequential()
     model.add(embedding_layer)
     # model.add(Embedding(max_features, 128))
     model.add(LSTM(lstmN, dropout=0.2, recurrent_dropout=0.2))
+
+    if incomplete:
+        return model
+
+
     model.add(Dense(numLabels, activation='softmax'))   
     model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
