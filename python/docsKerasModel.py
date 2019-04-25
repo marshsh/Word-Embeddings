@@ -37,6 +37,8 @@ def getDocsModel(args, corpusA, model_type, numLabels, MAX_SEQUENCE_LENGTH, MAX_
     model.add(Dense(numLabels, activation='softmax'))
     model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
+    model.build()
+    
     print(model.summary())
     return model
 
