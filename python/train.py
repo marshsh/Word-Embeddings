@@ -169,11 +169,9 @@ def main(args):
 
         if args.target == 'words' :
             embedding_layer = getEmbeddingLayer(args.embedding_type, corpusA, MAX_NUM_WORDS, EMBEDDING_DIM)
-            model = getWordsModel(args.kerasModel, embedding_layer, numLabels, MAX_SEQUENCE_LENGTH, , incomplete=False)
+            model = getWordsModel(args.kerasModel, embedding_layer, numLabels, MAX_SEQUENCE_LENGTH, incomplete=False)
         elif args.target == 'docs' :
-            model = docsKM.getDocsModel(corpusA, )
-
-
+            model = docsKM.getDocsModel(corpusA, args.kerasModel, numLabels, MAX_SEQUENCE_LENGTH):
 
 
 
