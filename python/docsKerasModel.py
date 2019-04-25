@@ -23,7 +23,7 @@ def getDocsModel(args, corpusA, model_type, numLabels, MAX_SEQUENCE_LENGTH, MAX_
 
     second_embedding_layer = train.getEmbeddingLayer(args, "smh", corpusA, MAX_NUM_WORDS, EMBEDDING_DIM)
 
-    second.add(embedding_layer)
+    second.add(second_embedding_layer)
 
 
 
