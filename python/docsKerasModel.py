@@ -13,25 +13,25 @@ import embeddings as emb
 
 def getDocsModel(corpusA, model_type, numLabels, MAX_SEQUENCE_LENGTH):
 
-	first_embedding_layer = train.getEmbeddingLayer("w2v", corpusA, MAX_NUM_WORDS, EMBEDDING_DIM)
+    first_embedding_layer = train.getEmbeddingLayer("w2v", corpusA, MAX_NUM_WORDS, EMBEDDING_DIM)
 
-	first = train.getWordsModel(model_type, first_embedding_layer, numLabels, MAX_SEQUENCE_LENGTH, incomplete=True)
-
-
-
-	second = Sequential()
-
-	second_embedding_layer = train.getEmbeddingLayer("smh", corpusA, MAX_NUM_WORDS, EMBEDDING_DIM)
-
-	second.add(embedding_layer)
+    first = train.getWordsModel(model_type, first_embedding_layer, numLabels, MAX_SEQUENCE_LENGTH, incomplete=True)
 
 
 
-	merged = Concatenate([first, second])
+    second = Sequential()
+
+    second_embedding_layer = train.getEmbeddingLayer("smh", corpusA, MAX_NUM_WORDS, EMBEDDING_DIM)
+
+    second.add(embedding_layer)
 
 
-	model = Sequential()
-	model.add(merged)
+
+    merged = Concatenate([first, second])
+
+
+    model = Sequential()
+    model.add(merged)
 
 
     model.add(Dense(numLabels, activation='softmax'))
