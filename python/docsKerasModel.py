@@ -11,9 +11,9 @@ import train
 import embeddings as emb
 
 
-def getDocsModel(corpusA, model_type, numLabels, MAX_SEQUENCE_LENGTH, MAX_NUM_WORDS, EMBEDDING_DIM):
+def getDocsModel(args, corpusA, model_type, numLabels, MAX_SEQUENCE_LENGTH, MAX_NUM_WORDS, EMBEDDING_DIM):
 
-    first_embedding_layer = train.getEmbeddingLayer("w2v", corpusA, MAX_NUM_WORDS, EMBEDDING_DIM)
+    first_embedding_layer = train.getEmbeddingLayer(args, "w2v", corpusA, MAX_NUM_WORDS, EMBEDDING_DIM)
 
     first = train.getWordsModel(model_type, first_embedding_layer, numLabels, MAX_SEQUENCE_LENGTH, incomplete=True)
 

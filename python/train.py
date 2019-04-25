@@ -51,7 +51,7 @@ from tensorflow.python.keras.callbacks import TensorBoard, ModelCheckpoint, Earl
 
 
 
-def getEmbeddingLayer(embedding_type, corpus, MAX_NUM_WORDS=20000, EMBEDDING_DIM=300):
+def getEmbeddingLayer(args, embedding_type, corpus, MAX_NUM_WORDS=20000, EMBEDDING_DIM=300):
     print "Loading embbeding-dictionary"
 
 
@@ -168,10 +168,10 @@ def main(args):
 # ones intended for document embeddings.
 
         if args.target == 'words' :
-            embedding_layer = getEmbeddingLayer(args.embedding_type, corpusA, MAX_NUM_WORDS, EMBEDDING_DIM)
+            embedding_layer = getEmbeddingLayer(args, args.embedding_type, corpusA, MAX_NUM_WORDS, EMBEDDING_DIM)
             model = getWordsModel(args.kerasModel, embedding_layer, numLabels, MAX_SEQUENCE_LENGTH, incomplete=False)
         elif args.target == 'docs' :
-            model = docsKM.getDocsModel(corpusA, args.kerasModel, numLabels, MAX_SEQUENCE_LENGTH, MAX_NUM_WORDS, EMBEDDING_DIM)
+            model = docsKM.getDocsModel(args, corpusA, args.kerasModel, numLabels, MAX_SEQUENCE_LENGTH, MAX_NUM_WORDS, EMBEDDING_DIM)
 
 
 
