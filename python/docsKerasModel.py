@@ -27,7 +27,7 @@ def getDocsModel(args, corpusA, model_type, numLabels, MAX_SEQUENCE_LENGTH, MAX_
 
 
 
-    merged = Concatenate([first, second])
+    merged = concatenate([first, second])
 
 
     model = Sequential()
