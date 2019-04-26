@@ -1,7 +1,7 @@
 
 
 import numpy as np
-from tensorflow.keras.layers import Concatenate
+from tensorflow.keras.layers import concatenate
 from tensorflow.keras.layers import Dense, Input, GlobalMaxPooling1D
 from tensorflow.keras.layers import Conv1D, MaxPooling1D, Embedding, LSTM
 from tensorflow.keras.models import Model, Sequential
