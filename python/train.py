@@ -194,15 +194,15 @@ def main(args):
             period=1
             )
 
-        earlyStopping = EarlyStopping(
-            monitor='val_acc',
-            min_delta=0,
-            patience=15,
-            verbose=0,
-            mode='auto',
-            baseline=None,
-            restore_best_weights=False
-            )
+        # earlyStopping = EarlyStopping(
+        #     monitor='val_acc',
+        #     min_delta=0,
+        #     patience=15,
+        #     verbose=0,
+        #     mode='auto',
+        #     baseline=None,
+        #     restore_best_weights=False
+        #     )
 
 
 
