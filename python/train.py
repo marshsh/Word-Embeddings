@@ -167,10 +167,10 @@ def main(args):
 # Spliting into two different types of neural network models. The ones intended for word embeddings and the 
 # ones intended for document embeddings.
 
-        if args.target == 'words' :
+        if args.layout == 'words' :
             embedding_layer = getEmbeddingLayer(args, args.embedding_type, corpusA, a.MAX_NUM_WORDS, a.EMBEDDING_DIM)
             model = getWordsModel(args.kerasModel, embedding_layer, numLabels, a.MAX_SEQUENCE_LENGTH, incomplete=False)
-        elif args.target == 'docs' :
+        elif args.layout == 'docs' :
             model = docsKM.getDocsModel(args, corpusA, args.kerasModel, numLabels, a.MAX_SEQUENCE_LENGTH, a.MAX_NUM_WORDS, a.EMBEDDING_DIM)
 
 

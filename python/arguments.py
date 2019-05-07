@@ -1,6 +1,6 @@
 import argparse
 import embeddings
-
+import os
 
 # Global Variables
 
@@ -37,6 +37,7 @@ def preMain(aaaargs=[]):
 	parser = argparse.ArgumentParser()
 	parser.add_argument("--layout", "-ly", "-l", 
 						choices=['words','docs'], 
+						default = 'words',
 						help="Type of classification embeddings we're creating.")
 
 	parser.add_argument("--embedding_type", "-et", "-e", 
