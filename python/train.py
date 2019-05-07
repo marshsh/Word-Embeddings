@@ -34,7 +34,6 @@ from tensorflow.keras.initializers import Constant
 
 import os
 import numpy as np
-import json
 
 # Our classes:
 import embeddings
@@ -42,6 +41,7 @@ import corpus
 import kerasModel as km
 import docsKerasModel as docsKM
 import arguments as a
+import tools
 
 from time import time, localtime
 from tensorflow.python.keras.callbacks import TensorBoard, ModelCheckpoint, EarlyStopping
@@ -218,9 +218,7 @@ def main(args):
     model.save(modelName)
 
     histName = os.path.join("history",callBackName)
-    with open(histName,'w') as f:
-        json.dump(history_dic, f)
-
+    tools.dumpPickle(histName, history_dic)
 
 
 
