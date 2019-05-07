@@ -9,6 +9,8 @@ from math import log1p
 
 from discovery.topics import load_vocabulary, save_topics, save_time, get_models_docfreq, sort_topics, listdb_to_topics
 
+import arguments as a
+
 
 def glove_get_embeddings():
     """
@@ -35,13 +37,15 @@ def glove_get_embeddings():
 def smh_get_embeddings( filePrefix, reCalculate=False, logNormal=False):
 	print '*** smh_get_embeddings ***'
 
+	extension = getSMHextension()
 
 	# the SMH vectors have already been calculated and saved
-	if os.path.exists(filePrefix + '.smh_vectors') and (not reCalculate) :
-		return tools.loadPickle(filePrefix + '.smh_vectors')
+	if os.path.exists(filePrefix + '.smh_vectors' + extension) and (not reCalculate) :
+		return tools.loadPickle(filePrefix + '.smh_vectors' + extension)
 
 	# the vectors have not been calculated, but the topic distribution have been saved
-	if os.path.exists(filePrefix + '.topicsRaw') and (not reCalculate) :
+
+	if os.path.exists(filePrefix + '.topicsRaw' + extension) and (not reCalculate) :
 		return smh_embeddings_from_model( filePrefix, logNormal=logNormal )
 
 
@@ -49,7 +53,7 @@ def smh_get_embeddings( filePrefix, reCalculate=False, logNormal=False):
 	smh_get_model(filePrefix)
 	smhVectors = smh_embeddings_from_model( filePrefix , logNormal=logNormal )
 
-	tools.dumpPickle( filePrefix + '.smh_vectors', smhVectors )
+	tools.dumpPickle( filePrefix + '.smh_vectors' + extension, smhVectors )
 
 	return smhVectors
 
@@ -99,24 +103,26 @@ def word2vec_get_embeddings( filePrefix, corpus, full=False, reCalculate=False )
 
 def contextSMH_get_embeddings( filePrefix, windowSize = 5, reCalculate=False, logNormal=False):
 
-	if os.path.exists(filePrefix + '.context' + '.' + str(windowSize)) and (not reCalculate) :
-		contextVec = tools.loadPickle(filePrefix + '.context' + '.' + str(windowSize))
+	extension = getSMHextension()
+
+	if os.path.exists(filePrefix + '.context' + '.' + str(windowSize) + '.' + extension) and (not reCalculate) :
+		contextVec = tools.loadPickle(filePrefix + '.context' + '.' + str(windowSize) + '.' + extension)
 		return contextVec
 
 
 
 
 	# Load saved context vectors
-	if os.path.exists(filePrefix + '.ctxtBefore' + '.' + str(windowSize)) and \
-	  os.path.exists(filePrefix + '.ctxtBefore' + '.' + str(windowSize)) and (not reCalculate) :
+	if os.path.exists(filePrefix + '.ctxtBefore' + '.' + str(windowSize) + '.' + extension) and \
+	  os.path.exists(filePrefix + '.ctxtBefore' + '.' + str(windowSize) + '.' + extension) and (not reCalculate) :
 		print 'Loading contextVecBefore and ... \n'
-		contextVecBefore = tools.loadPickle(filePrefix + '.ctxtBefore' + '.' + str(windowSize))
-		contextVecAfter = tools.loadPickle(filePrefix + '.ctxtAfter' + '.' + str(windowSize))
+		contextVecBefore = tools.loadPickle(filePrefix + '.ctxtBefore' + '.' + str(windowSize) + '.' + extension)
+		contextVecAfter = tools.loadPickle(filePrefix + '.ctxtAfter' + '.' + str(windowSize) + '.' + extension)
 		# print contextVecBefore.keys()
 	else:
 		# the SMH vectors have already been calculated and saved, but CTXT vectors haven't
-		if os.path.exists(filePrefix + '.smh_vectors') and (not reCalculate) :
-			smhVectors = tools.loadPickle(filePrefix + '.smh_vectors')
+		if os.path.exists(filePrefix + '.smh_vectors' + extension) and (not reCalculate) :
+			smhVectors = tools.loadPickle(filePrefix + '.smh_vectors' + extension)
 		else :
 			print 'Loading smhVectors \n'
 			smhVectors = smh_get_embeddings( filePrefix, reCalculate=reCalculate, logNormal=logNormal )
@@ -124,8 +130,8 @@ def contextSMH_get_embeddings( filePrefix, windowSize = 5, reCalculate=False, lo
 		print 'Calculating contextVecBefore \n'
 		contextVecBefore, contextVecAfter = contextSMH(filePrefix, smhVectors, windowSize, logNormal=logNormal)
 
-		tools.dumpPickle(filePrefix + '.ctxtBefore' + '.' + str(windowSize), contextVecBefore )
-		tools.dumpPickle(filePrefix + '.ctxtAfter' + '.' + str(windowSize), contextVecAfter )
+		tools.dumpPickle(filePrefix + '.ctxtBefore' + '.' + str(windowSize) + '.' + extension, contextVecBefore )
+		tools.dumpPickle(filePrefix + '.ctxtAfter' + '.' + str(windowSize) + '.' + extension, contextVecAfter )
 
 
 	# print ' \n Concatenation of embeddings.'
@@ -146,7 +152,7 @@ def contextSMH_get_embeddings( filePrefix, windowSize = 5, reCalculate=False, lo
 	print 'Embeddings concatenated. \n'
 
 
-	tools.dumpPickle(filePrefix + '.context' + '.' + str(windowSize), embeddings_dic)
+	tools.dumpPickle(filePrefix + '.context' + '.' + str(windowSize) + '.' + extension, embeddings_dic)
 
 
 	return embeddings_dic
@@ -161,8 +167,10 @@ def topicAvg_get_embeddings(filePrefix, corpus, reCalculate=False):
 
 def glove_and_context_embeddings(filePrefix, windowSize = 5, reCalculate=False, logNormal=False ):
 
-	if os.path.exists(filePrefix + '.glove_and_context') and (not reCalculate) :
-		return tools.loadPickle(filePrefix + '.glove_and_context')
+	extension = getSMHextension()
+
+	if os.path.exists(filePrefix + '.glove_and_context' + extension) and (not reCalculate) :
+		return tools.loadPickle(filePrefix + '.glove_and_context' + extension)
 
 
 	glove = gloveEmbbedingDic()
@@ -180,7 +188,7 @@ def glove_and_context_embeddings(filePrefix, windowSize = 5, reCalculate=False, 
 		embeddings_dic[key] = np.concatenate([context[key] , extraV])
 
 
-	tools.dumpPickle( filePrefix + '.glove_and_context', embeddings_dic )
+	tools.dumpPickle( filePrefix + '.glove_and_context' + extension, embeddings_dic )
 
 	return embeddings_dic
 
@@ -192,7 +200,9 @@ def smh_and_word2vec_embeddings(filePrefix, corpus, reCalculate=False, logNormal
 
 	word2vec = word2vec_get_embeddings(filePrefix, corpus, reCalculate=reCalculate)
 
-	embeddings_dic = mix_2_embeddings(filePrefix, word2vec, smh_vectors, 'word2vec', 'smh', replaceDic)
+	ext = getSMHextension()
+
+	embeddings_dic = mix_2_embeddings(filePrefix, word2vec, smh_vectors, 'word2vec', 'smh' + ext, replaceDic)
 
 	return embeddings_dic
 
@@ -205,7 +215,9 @@ def context_and_word2vec_embeddings(filePrefix, corpus, reCalculate=False, logNo
 
 	word2vec = word2vec_get_embeddings(filePrefix, corpus, reCalculate=reCalculate)
 
-	embeddings_dic = mix_2_embeddings(filePrefix, word2vec, context_vectors, 'word2vec', 'smh', replaceDic)
+	ext = getSMHextension()
+
+	embeddings_dic = mix_2_embeddings(filePrefix, word2vec, context_vectors, 'word2vec', 'context' + ext, replaceDic)
 
 	return embeddings_dic
 
@@ -226,7 +238,7 @@ def w2v_and_topicAvg_embeddings(filePrefix, corpus, reCalculate=False, logNormal
 			vectorW2V = np.asarray(word2vec[word])
 		else :
 			vectorW2V = np.asarray(wordTopics[word])
-					
+
 		vector = (vectorTopic + vectorW2V).tolist()
 		embeddings_dic[word] = vector
 
@@ -237,8 +249,8 @@ def w2v_and_topicAvg_embeddings(filePrefix, corpus, reCalculate=False, logNormal
 # SMH Vectors
 
 
-def smh_get_model( filePrefix ):
-	print '*** smh_get_model ***'
+def smh_get_model( filePrefix):
+	print '\n*** smh_get_model *** \n \n tuple_size = {}, coocurrence_threshold = {}, overlap = {} \n \n'.format(a.TUPLE_SIZE, a.COOCURRENCE_THRESHOLS, a.OVERLAP)
 
 	corpusFile = getFileExtension( filePrefix, '.corpus')
 	ifsFile = getFileExtension( filePrefix, '.ifs')
@@ -247,20 +259,28 @@ def smh_get_model( filePrefix ):
 	corpus = smh.listdb_load(corpusFile)
 	ifs = smh.listdb_load(ifsFile)
 	print 'Loaded .ref and .ifs'
-	discoverer = smh.SMHDiscoverer()
+	discoverer = smh.SMHDiscoverer( a.TUPLE_SIZE, a.COOCURRENCE_THRESHOLS, a.OVERLAP)
+
+
+	# threshold 0.02, 0.04, 0.06
+	# tuple_size = 2, 3
+
 	print 'Fitting SMH Discoverer'
 	models = discoverer.fit(ifs, expand = corpus)
-	models.save(filePrefix + '.topicsRaw')
+	extension = getSMHextension()
+	models.save(filePrefix + '.topicsRaw' + extension)
 	print "SMH Model saved (a ldb with lists of topics' tokens)"
 
 
 # All preparations needed to use SMH, are done in the script prepare_db.sh
 def smh_embeddings_from_model( filePrefix, logNormal=False ):
 
+	extension = getSMHextension()
+
 	if logNormal:
 		return smh_logNormal_embeddings( filePrefix, reCalculate=True )
 
-	topicsRawPath = getFileExtension( filePrefix, '.topicsRaw')
+	topicsRawPath = getFileExtension( filePrefix, '.topicsRaw' + extension)
 	model = smh.listdb_load(topicsRawPath)
 
 	vocpath = getFileExtension( filePrefix, '.vocab')
@@ -285,7 +305,7 @@ def smh_embeddings_from_model( filePrefix, logNormal=False ):
 
 			smhVectors[word][topicId] = freq
 
-	# tools.dumpPickle( filePrefix + '.smh_vectors', smhVectors ) # Already saving in calling method
+	# Already saving in calling method
 
 	return smhVectors
 
@@ -476,7 +496,9 @@ def word_avg_from_topics_w2v(filePrefix, corpus, reCalculate=False):
 # Usefull functions
 
 
-
+def getSMHextension():
+	extension = '[mtupS_{}][coo_{}][ovlp_{}]'.format(a.TUPLE_SIZE, a.COOCURRENCE_THRESHOLS, a.OVERLAP)
+	return extension
 
 
 def getFileExtension( filePrefix, extension):
