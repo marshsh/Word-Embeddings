@@ -230,7 +230,7 @@ def main(args):
 if __name__ == "__main__":
 
 
-    args = preMain()
+    args = a.preMain()
 
     main(args)
 
