@@ -1,5 +1,5 @@
 import argparse
-from embeddings import getSMHextension
+import embeddings
 
 
 # Global Variables
@@ -162,7 +162,7 @@ def preMain(aaaargs=[]):
 	# Adding SMH minTuppleSize and coocurringThreshold
 	lista = ['smh', 'context']
 	if bool(sum(map( lambda x: x in args.embedding_type, lista))):
-		smhName = getSMHextension()
+		smhName = embeddings.getSMHextension()
 		args.nameBoard = smhName + args.nameBoard
 
 	# FINAL NAME

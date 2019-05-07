@@ -497,7 +497,7 @@ def word_avg_from_topics_w2v(filePrefix, corpus, reCalculate=False):
 
 
 def getSMHextension():
-	extension = '[mtupS_{}][coo_{}][ovlp_{}]'.format(a.TUPLE_SIZE, a.COOCURRENCE_THRESHOLS, a.OVERLAP)
+	extension = '[mTupS_{}][coo_{}][ovlp_{}]'.format(a.TUPLE_SIZE, a.COOCURRENCE_THRESHOLS, a.OVERLAP)
 	return extension
 
 
