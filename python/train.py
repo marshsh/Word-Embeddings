@@ -85,7 +85,8 @@ def getEmbeddingLayer(args, embedding_type, corpus, MAX_NUM_WORDS=20000, EMBEDDI
         embeddings_dic = embeddings.context_and_word2vec_embeddings( args.filePrefix, args.corpus, reCalculate=args.reCalculate)
     elif embedding_type == 'w2v+context_logN':
         embeddings_dic = embeddings.context_and_word2vec_embeddings( args.filePrefix, args.corpus, reCalculate=args.reCalculate, logNormal=True)
-
+    elif embedding_type == 'gensim':
+        embeddings_dic = gensimW2V.gensimW2V_embeddings(args.corpus, epochsN=args.epochsN, args.reCalculate)
 
 
     elif embedding_type == 'oneH':
@@ -205,21 +206,21 @@ def main(args):
         #     )
 
 
+    try:
+        print 'Training model.'
+        history = model.fit(corpusA.x_train, corpusA.y_train,
+                  batch_size=18,
+                  epochs=a.EPOCHS,
+                  validation_data=(corpusA.x_test, corpusA.y_test),
+                  callbacks=[tensorboard, checkPoint])
+                  # callbacks=[tensorboard])
+    finally:
+        history_dic = history.history
 
-    print 'Training model.'
-    history = model.fit(corpusA.x_train, corpusA.y_train,
-              batch_size=18,
-              epochs=a.EPOCHS,
-              validation_data=(corpusA.x_test, corpusA.y_test),
-              # callbacks=[tensorboard, checkPoint])
-              callbacks=[tensorboard])
+        model.save(modelName)
 
-    history_dic = history.history
-
-    model.save(modelName)
-
-    histName = os.path.join("history",callBackName)
-    tools.dumpPickle(histName, history_dic)
+        histName = os.path.join("history",callBackName)
+        tools.dumpPickle(histName, history_dic)
 
 
 

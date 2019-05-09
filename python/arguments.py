@@ -4,7 +4,7 @@ import os
 
 # Global Variables
 
-EPOCHS = 100
+EPOCHS = 40
 
 
 MAX_SEQUENCE_LENGTH = 1000
@@ -43,7 +43,7 @@ def preMain(aaaargs=[]):
 	parser.add_argument("--embedding_type", "-et", "-e", 
 						choices=['smh', 'oneH', 'w2v', 'glove', 'contextVec', 'topicAvg', 
 						'w2v+smh', 'w2v+contextVec', 'glove+contextVec', 'w2v+topicAvg', 
-						'w2v+context', 'w2vGensim'   ], 
+						'w2v+context', 'gensim'   ], 
 						help="Type of word representation used to train the model.")
 
 	parser.add_argument("--corpus", "-c", 
@@ -72,6 +72,10 @@ def preMain(aaaargs=[]):
 	parser.add_argument("--coo_threshold", "-coo", type=float)
 
 	parser.add_argument("--overlap", "-cv", type=float)
+
+
+# W2V Gensim Parameter
+	parser.add_argument("--epochsN","-ep", type=int, default=5 )
 
 
 
@@ -129,6 +133,10 @@ def preMain(aaaargs=[]):
 	if args.overlap :
 		global OVERLAP
 		OVERLAP = args.overlap
+
+# W2V Gensim Parameter adjust epochsN
+	if args.epochsN < 1:
+		args.epochsN = 5
 
 
 

@@ -32,7 +32,7 @@ import itertools
 import sys
 import codecs
 import re
-from collections import Counter
+from collections import Counter, Iterator
 
 
 from sklearn.datasets import fetch_20newsgroups
@@ -43,6 +43,7 @@ from keras.preprocessing.sequence import pad_sequences
 from keras.utils import to_categorical
 
 import tools
+import arguments as a
 
 
 class corpus:
@@ -155,16 +156,48 @@ class corpus:
 
 	################################################################################################
 
-	def streamData(self):
-		print 'a'
+    def stream_x_train(self):
+        itera = Stream(self.x_train)
+        return itera
+
+    def stream_x_test(self):
+        itera = Stream(self.x_test)
+        return itera
+
+
+
+
+
+class Stream(Iterator):
+    def __init__(self, data):
+        self.stop = data.shape[0]
+        self.data = data
+        self.i = 0
+# 
+    def __iter__(self):
+        return self
+# 
+    def next(self):
+        if self.i < self.stop:
+            sentence = [str(x) for x in vec if x != 0]
+            self.i += 1
+            return sentence
+        else:
+            self.i = 0
+            raise StopIteration
+# 
+    __next__ = next # Python 3 compatibility
+
+
+
 
 
 
 def getCorpus(nameC, extraName='', 
-                 MAX_NUM_WORDS = 20000,
-                 MAX_SEQUENCE_LENGTH = 1000,
-                 num_valid = 0.2,
-                 num_test = 0.18,
+                 MAX_NUM_WORDS = a.MAX_NUM_WORDS,
+                 MAX_SEQUENCE_LENGTH = a.MAX_SEQUENCE_LENGTH,
+                 num_valid = a.VALIDATION_SPLIT,
+                 num_test = a.TEST_SPLIT,
                  reCalculate = False
                  ):
 
