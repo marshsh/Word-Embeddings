@@ -87,7 +87,7 @@ def getEmbeddingLayer(args, embedding_type, corpus, MAX_NUM_WORDS=20000, EMBEDDI
     elif embedding_type == 'w2v+context_logN':
         embeddings_dic = embeddings.context_and_word2vec_embeddings( args.filePrefix, args.corpus, reCalculate=args.reCalculate, logNormal=True)
     elif embedding_type == 'gensim':
-        embeddings_dic = gensimW2V.gensimW2V_embeddings(args.corpus, epochsN=args.epochsN, args.reCalculate)
+        embeddings_dic = gensimW2V.gensimW2V_embeddings(args.corpus, epochsN=args.epochsN, reCalculate=args.reCalculate)
 
 
     elif embedding_type == 'oneH':
