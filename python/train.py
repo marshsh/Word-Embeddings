@@ -42,6 +42,7 @@ import kerasModel as km
 import docsKerasModel as docsKM
 import arguments as a
 import tools
+import gensimW2V
 
 from time import time, localtime
 from tensorflow.python.keras.callbacks import TensorBoard, ModelCheckpoint, EarlyStopping
