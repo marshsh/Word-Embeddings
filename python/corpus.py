@@ -179,7 +179,7 @@ class Stream(Iterator):
 # 
     def next(self):
         if self.i < self.stop:
-            for vec in data:
+            for vec in self.data:
                 sentence = [str(x) for x in vec if x != 0]
                 self.i += 1
             return sentence
