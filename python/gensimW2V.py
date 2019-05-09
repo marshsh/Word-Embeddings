@@ -1,6 +1,7 @@
 
 import argparse
 from gensim.models import Word2Vec
+import os
 
 import corpus
 import tools
