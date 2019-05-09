@@ -179,8 +179,9 @@ class Stream(Iterator):
 # 
     def next(self):
         if self.i < self.stop:
-            sentence = [str(x) for x in vec if x != 0]
-            self.i += 1
+            for vec in data:
+                sentence = [str(x) for x in vec if x != 0]
+                self.i += 1
             return sentence
         else:
             self.i = 0
