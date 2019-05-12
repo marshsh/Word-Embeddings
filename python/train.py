@@ -159,16 +159,11 @@ def main(args):
         print "Restoring last instance of Model : ", modelName
         model = keras.models.load_model(modelName)
     else :
-
         print "Creating Model : ", modelName
-
         corpusA = getCorpus(args)
         numLabels = len(corpusA.y_train[0]) # labels are in cathegorical shape, this is the number of clases
-
-
 # Spliting into two different types of neural network models. The ones intended for word embeddings and the 
 # ones intended for document embeddings.
-
         if args.layout == 'words' :
             embedding_layer = getEmbeddingLayer(args, args.embedding_type, corpusA, a.MAX_NUM_WORDS, a.EMBEDDING_DIM)
             model = getWordsModel(args.kerasModel, embedding_layer, numLabels, a.MAX_SEQUENCE_LENGTH, incomplete=False)
@@ -178,23 +173,23 @@ def main(args):
 
 
 
-        callBackName = "{}__{}-{}--{}:{}".format( 
-            args.nameBoard, localtime().tm_mon, 
-            localtime().tm_mday, localtime().tm_hour, localtime().tm_min)
+    callBackName = "{}__{}-{}--{}:{}".format( 
+        args.nameBoard, localtime().tm_mon, 
+        localtime().tm_mday, localtime().tm_hour, localtime().tm_min)
 
-        tensorboard = TensorBoard( log_dir="logs/"+callBackName,
-            write_graph=False, histogram_freq=1, write_grads=True
-            )
+    tensorboard = TensorBoard( log_dir="logs/"+callBackName,
+        write_graph=False, histogram_freq=1, write_grads=True
+        )
 
-        checkPoint = ModelCheckpoint(
-            "checkPoints/"+callBackName,
-            monitor='val_acc',
-            verbose=0,
-            save_best_only=True,
-            save_weights_only=False,
-            mode='auto',
-            period=1
-            )
+    checkPoint = ModelCheckpoint(
+        "checkPoints/"+callBackName,
+        monitor='val_acc',
+        verbose=0,
+        save_best_only=True,
+        save_weights_only=False,
+        mode='auto',
+        period=1
+        )
 
         # earlyStopping = EarlyStopping(
         #     monitor='val_acc',
@@ -207,21 +202,20 @@ def main(args):
         #     )
 
 
-    try:
-        print 'Training model.'
-        history = model.fit(corpusA.x_train, corpusA.y_train,
-                  batch_size=18,
-                  epochs=a.EPOCHS,
-                  validation_data=(corpusA.x_test, corpusA.y_test),
-                  callbacks=[tensorboard, checkPoint])
-                  # callbacks=[tensorboard])
-    finally:
-        history_dic = history.history
+    print 'Training model.'
+    history = model.fit(corpusA.x_train, corpusA.y_train,
+              batch_size=18,
+              epochs=a.EPOCHS,
+              validation_data=(corpusA.x_test, corpusA.y_test),
+              callbacks=[tensorboard, checkPoint])
+              # callbacks=[tensorboard])
 
-        model.save(modelName)
+    history_dic = history.history
 
-        histName = os.path.join("history",callBackName)
-        tools.dumpPickle(histName, history_dic)
+    model.save(modelName)
+
+    histName = os.path.join("history",callBackName)
+    tools.dumpPickle(histName, history_dic)
 
 
 
