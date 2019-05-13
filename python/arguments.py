@@ -1,5 +1,6 @@
 import argparse
 import embeddings
+import gensimW2V
 import os
 
 # Global Variables
@@ -68,11 +69,11 @@ def preMain(aaaargs=[]):
 
 
 
-	parser.add_argument("--embSize", type=int)
+	parser.add_argument("--embSize", "-eS", type=int)
 
 
 # SMH Parameters
-	parser.add_argument("--tupleS", type=int)
+	parser.add_argument("--tupleS", "-tS", type=int)
 
 	parser.add_argument("--coo_threshold", "-coo", type=float)
 
@@ -181,6 +182,11 @@ def preMain(aaaargs=[]):
 	if bool(sum(map( lambda x: x in args.embedding_type, lista))):
 		smhName = embeddings.getSMHextension()
 		args.nameBoard = smhName + args.nameBoard
+
+	# Adding gensim W2V name epochs and embedding Dim
+	if args.embedding_type == 'gensim' :
+		gensimName = gensimW2V.getGensimExtension()
+		args.nameBoard = gensimName + args.nameBoard
 
 	# FINAL NAME
 	args.nameBoard = "{}_{}_{}_[{}-{}]_{}".format(args.corpus, args.embedding_type, 

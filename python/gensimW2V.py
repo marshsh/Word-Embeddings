@@ -42,6 +42,10 @@ def gensimW2V_embeddings(corpusName, epochsN=5, reCalculate=False):
 
 
 
+def getGensimExtension():
+	extension = '[embSize_{}][epochs_{}]'.format(a.EMBEDDING_DIM, a.EPOCHS)
+	return extension
+
 
 def main():
 
