@@ -18,8 +18,8 @@ WINDOW_SIZE = 5
 
 
 TUPLE_SIZE = 3
-COOCURRENCE_THRESHOLS = 0.06
-OVERLAP = 0.8
+COOCURRENCE_THRESHOLS = 0.02 # 0.3
+OVERLAP = 0.9
 
 
 def preMain(aaaargs=[]):
@@ -64,6 +64,11 @@ def preMain(aaaargs=[]):
 	parser.add_argument("--lstmNeurons", "-lstmN", "-lstm", type=int, default=128, help="Number of neurons in lstm layer of Keras Model")
 
 	parser.add_argument("--size", type=int)
+
+
+
+
+	parser.add_argument("--embSize", type=int)
 
 
 # SMH Parameters
@@ -138,6 +143,9 @@ def preMain(aaaargs=[]):
 	if args.epochsN < 1:
 		args.epochsN = 5
 
+# Embedding Size Parameter
+	if args.embSize:
+		EMBEDDING_DIM = args.embSize
 
 
 # PREFIX fix

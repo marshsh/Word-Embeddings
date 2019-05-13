@@ -21,7 +21,7 @@ def gensimW2V_embeddings(corpusName, epochsN=5, reCalculate=False):
 
 	it = corp.stream_x_train()
 
-	model = Word2Vec(min_count=1)
+	model = Word2Vec(min_count=1, size=a.EMBEDDING_DIM)
 	model.build_vocab(it)
 	model.train(it, total_examples=model.corpus_count, epochs=epochsN, compute_loss=True)
 

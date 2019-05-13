@@ -265,6 +265,8 @@ def smh_get_model( filePrefix):
 	# threshold 0.02, 0.04, 0.06
 	# tuple_size = 2, 3
 
+	# 
+
 	print 'Fitting SMH Discoverer'
 	models = discoverer.fit(ifs, expand = corpus)
 	extension = getSMHextension()
