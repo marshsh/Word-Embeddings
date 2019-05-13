@@ -4,7 +4,7 @@ import os
 
 # Global Variables
 
-EPOCHS = 40
+EPOCHS = 30
 
 
 MAX_SEQUENCE_LENGTH = 1000
