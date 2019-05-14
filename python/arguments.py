@@ -69,7 +69,6 @@ def preMain(aaaargs=[]):
 
 
 
-	parser.add_argument("--embSize", "-eS", type=int)
 
 
 # SMH Parameters
@@ -82,6 +81,10 @@ def preMain(aaaargs=[]):
 
 # W2V Gensim Parameter
 	parser.add_argument("--epochsN","-ep", type=int, default=5 )
+
+	parser.add_argument("--embSize", "-eS", type=int)
+
+
 
 
 
@@ -188,7 +191,7 @@ def preMain(aaaargs=[]):
 	# Adding gensim W2V name epochs and embedding Dim
 	if args.embedding_type == 'gensim' :
 		from gensimW2V import getGensimExtension
-		gensimName = getGensimExtension()
+		gensimName = getGensimExtension(args.epochsN)
 		args.nameBoard = gensimName + args.nameBoard
 
 	# FINAL NAME
