@@ -181,13 +181,13 @@ def preMain(aaaargs=[]):
 	lista = ['smh', 'context']
 	if bool(sum(map( lambda x: x in args.embedding_type, lista))):
 		from embeddings import getSMHextension 
-		smhName = embeddings.getSMHextension()
+		smhName = getSMHextension()
 		args.nameBoard = smhName + args.nameBoard
 
 	# Adding gensim W2V name epochs and embedding Dim
 	if args.embedding_type == 'gensim' :
 		from gensimW2V import getGensimExtension
-		gensimName = gensimW2V.getGensimExtension()
+		gensimName = getGensimExtension()
 		args.nameBoard = gensimName + args.nameBoard
 
 	# FINAL NAME
