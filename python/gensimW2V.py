@@ -10,7 +10,7 @@ import arguments as a
 
 def gensimW2V_embeddings(corpusName, epochsN=5, reCalculate=False):
 
-	nameDrop = "./data/{}/{}.gensim_emb_{}_epch".format(corpusName, corpusName, epochsN)
+	nameDrop = "./data/{}/{}.gensim_emb_{}".format(corpusName, corpusName, getGensimExtension())
 
 	if os.path.exists(nameDrop) and (not reCalculate) :
 		dic = tools.loadPickle(nameDrop)
