@@ -149,6 +149,7 @@ def preMain(aaaargs=[]):
 
 # Embedding Size Parameter
 	if args.embSize:
+		global EMBEDDING_DIM
 		EMBEDDING_DIM = args.embSize
 		print "\n \n \n \n \n ***************** \n \n \n \n Embedding Size : {} \n \n \n \n".format(EMBEDDING_DIM)
 
