@@ -21,6 +21,7 @@ def gensimW2V_embeddings(corpusName, epochsN=5, reCalculate=False):
 
 	it = corp.stream_x_train()
 
+	print "Training gensim word embedings of dimension: {}, in {} epochs.".format(a.EMBEDDING_DIM,epochsN)
 	model = Word2Vec(min_count=1, size=a.EMBEDDING_DIM)
 	model.build_vocab(it)
 	model.train(it, total_examples=model.corpus_count, epochs=epochsN, compute_loss=True)
@@ -28,6 +29,7 @@ def gensimW2V_embeddings(corpusName, epochsN=5, reCalculate=False):
 	dic = {}
 	notIn = 0
 
+	print "Creating dictionary of gensim's trained wordembeddings."
 	for i in range(a.MAX_NUM_WORDS):
 	    try :
 	    	vec = model.wv[str(i)]
@@ -35,8 +37,9 @@ def gensimW2V_embeddings(corpusName, epochsN=5, reCalculate=False):
 	    except KeyError:
 	    	notIn += 1
 
-
+	print "Saving Dictionary"
 	tools.dumpPickle(nameDrop, dic)
+	print "Dictionary Saved"
 
 	return dic
 
