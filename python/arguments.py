@@ -1,9 +1,9 @@
 import argparse
-import embeddings
-import gensimW2V
 import os
 
 # Global Variables
+
+
 
 EPOCHS = 30
 
@@ -180,11 +180,13 @@ def preMain(aaaargs=[]):
 	# Adding SMH minTuppleSize and coocurringThreshold
 	lista = ['smh', 'context']
 	if bool(sum(map( lambda x: x in args.embedding_type, lista))):
+		from embeddings import getSMHextension 
 		smhName = embeddings.getSMHextension()
 		args.nameBoard = smhName + args.nameBoard
 
 	# Adding gensim W2V name epochs and embedding Dim
 	if args.embedding_type == 'gensim' :
+		from gensimW2V import getGensimExtension
 		gensimName = gensimW2V.getGensimExtension()
 		args.nameBoard = gensimName + args.nameBoard
 

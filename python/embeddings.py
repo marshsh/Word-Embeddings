@@ -250,7 +250,7 @@ def w2v_and_topicAvg_embeddings(filePrefix, corpus, reCalculate=False, logNormal
 
 
 def smh_get_model( filePrefix):
-	print '\n*** smh_get_model *** \n \n tuple_size = {}, coocurrence_threshold = {}, overlap = {} \n \n'.format(a.TUPLE_SIZE, a.COOCURRENCE_THRESHOLS, a.OVERLAP)
+	print '\n*** smh_get_model *** \n \n tuple_size = {}, coocurrence_threshold = {}, overlap = {} \n \n'.format(a.TUPLE_SIZE, a.COOCURRENCE_THRESHOLDS, a.OVERLAP)
 
 	corpusFile = getFileExtension( filePrefix, '.corpus')
 	ifsFile = getFileExtension( filePrefix, '.ifs')
@@ -259,7 +259,7 @@ def smh_get_model( filePrefix):
 	corpus = smh.listdb_load(corpusFile)
 	ifs = smh.listdb_load(ifsFile)
 	print 'Loaded .ref and .ifs'
-	discoverer = smh.SMHDiscoverer( tuple_size=a.TUPLE_SIZE, cooccurrence_threshold=a.COOCURRENCE_THRESHOLS, overlap=a.OVERLAP)
+	discoverer = smh.SMHDiscoverer( tuple_size=a.TUPLE_SIZE, cooccurrence_threshold=a.COOCURRENCE_THRESHOLDS, overlap=a.OVERLAP)
                  
 
 	# threshold 0.02, 0.04, 0.06
@@ -499,7 +499,7 @@ def word_avg_from_topics_w2v(filePrefix, corpus, reCalculate=False):
 
 
 def getSMHextension():
-	extension = '[mTupS_{}][coo_{}][ovlp_{}]'.format(a.TUPLE_SIZE, a.COOCURRENCE_THRESHOLS, a.OVERLAP)
+	extension = '[mTupS_{}][coo_{}][ovlp_{}]'.format(a.TUPLE_SIZE, a.COOCURRENCE_THRESHOLDS, a.OVERLAP)
 	return extension
 
 
