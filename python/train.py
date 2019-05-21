@@ -88,6 +88,10 @@ def getEmbeddingLayer(args, embedding_type, corpus, MAX_NUM_WORDS=20000, EMBEDDI
         embeddings_dic = embeddings.context_and_word2vec_embeddings( args.filePrefix, args.corpus, reCalculate=args.reCalculate, logNormal=True)
     elif embedding_type == 'gensim':
         embeddings_dic = gensimW2V.gensimW2V_embeddings(args.corpus, epochsN=args.epochsN, reCalculate=args.reCalculate)
+    elif embedding_type == 'smh_reduced':
+        embeddings_dic = embeddings.smh_reduced_topicN( filePrefix, topicN=args.topicN, topTopicWords=a.TOP_TOPIC_WORDS, reCalculate=args.reCalculate)
+    elif embedding_type == 'smh_reduced_logN':
+        embeddings_dic = embeddings.smh_reduced_topicN( filePrefix, topicN=args.topicN, topTopicWords=a.TOP_TOPIC_WORDS, reCalculate=args.reCalculate, logNormal=True)
 
 
     elif embedding_type == 'oneH':
@@ -173,7 +177,7 @@ def main(args):
 
 
 
-    callBackName = "{}__{}-{}--{}:{}".format( 
+    callBackName = "{}__M{}-D{}-time{}:{}".format( 
         args.nameBoard, localtime().tm_mon, 
         localtime().tm_mday, localtime().tm_hour, localtime().tm_min)
 

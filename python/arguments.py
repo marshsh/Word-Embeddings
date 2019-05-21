@@ -19,9 +19,12 @@ WINDOW_SIZE = 5
 
 
 TUPLE_SIZE = 3
-COOCURRENCE_THRESHOLS = 0.02 # 0.3
+COOCURRENCE_THRESHOLDS = 0.02 # 0.3
 OVERLAP = 0.9
+MIN_CLUSTER_SIZE = 5 # 10
 
+TOPIC_N = 0 # It will be set in arguments
+TOP_TOPIC_WORDS = 10
 
 def preMain(aaaargs=[]):
 	"""
@@ -78,6 +81,9 @@ def preMain(aaaargs=[]):
 
 	parser.add_argument("--overlap", "-cv", type=float)
 
+	parser.add_argument("--topicN", "-tN", type=int, help="Reduces SMH embeddings to the size given, taking first topicN topics with more relevance")
+
+
 
 # W2V Gensim Parameter
 	parser.add_argument("--epochsN","-ep", type=int, default=5 )
@@ -113,11 +119,6 @@ def preMain(aaaargs=[]):
 	print " \n Training ", args.corpus, "with ", args.embedding_type, " embbedings"
 
 
-	# Adding logNormal label 
-	if args.logNormal:
-		args.embedding_type += "_logN"
-		print "Using _logNormal smh embeddings."
-
 	# Unifiying corpus names
 	if args.corpus in ['20NG','20ng']:
 		args.corpus = '20newsgroups'
@@ -143,15 +144,30 @@ def preMain(aaaargs=[]):
 		global OVERLAP
 		OVERLAP = args.overlap
 
+	# Reduced topic numbers
+	if args.topicN :
+		print "\n ... Since you chose to use 'args.topicN' the embedding type used will be SMH_reduced \n"
+		args.embedding_type = 'smh_reduced'
+		TOPIC_N = args.topicN
+
+
 # W2V Gensim Parameter adjust epochsN
 	if args.epochsN < 1:
 		args.epochsN = 5
 
-# Embedding Size Parameter
+	# (Part of Gensim) Embedding Size Parameter
 	if args.embSize:
 		global EMBEDDING_DIM
 		EMBEDDING_DIM = args.embSize
 		print "\n \n \n \n \n ***************** \n \n \n \n Embedding Size : {} \n \n \n \n".format(EMBEDDING_DIM)
+
+
+
+# Adding logNormal label 
+	if args.logNormal:
+		args.embedding_type += "_logN"
+		print "Using _logNormal embeddings."
+
 
 
 # PREFIX fix
@@ -183,11 +199,12 @@ def preMain(aaaargs=[]):
 
 
 	# Adding SMH minTuppleSize and coocurringThreshold
-	lista = ['smh', 'context']
+	lista = ['smh', 'context', 'smh_reduced']
 	if bool(sum(map( lambda x: x in args.embedding_type, lista))):
 		from embeddings import getSMHextension 
-		smhName = getSMHextension()
+		smhName = getSMHextension(embType=args.embedding_type)
 		args.nameBoard = smhName + args.nameBoard
+
 
 	# Adding gensim W2V name epochs and embedding Dim
 	if args.embedding_type == 'gensim' :
@@ -195,12 +212,14 @@ def preMain(aaaargs=[]):
 		gensimName = getGensimExtension(args.epochsN)
 		args.nameBoard = gensimName + args.nameBoard
 
+
 	# FINAL NAME
-	args.nameBoard = "{}_{}_{}_[{}-{}]_{}".format(args.corpus, args.embedding_type, 
+	args.nameBoard = "{}_{}_{}_[convF{}-lstmN{}]_{}".format(args.corpus, args.embedding_type, 
 		args.kerasModel, args.convFilters, args.lstmNeurons, args.nameBoard)
 
 
 
+	# For Context Embeddings
 	if args.size == None:
 		args.size = WINDOW_SIZE
 

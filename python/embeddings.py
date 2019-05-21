@@ -33,7 +33,46 @@ def glove_get_embeddings():
 
     return embeddings_dic
 
+def smh_reduced_topicN( filePrefix, topicN=1000, topTopicWords=10, reCalculate=False, logNormal=False):
+	print '*** smh_reduced_topicN with ... {} topics ***'.format(topicN)
+
+	smhVectors = smh_get_embeddings( filePrefix, reCalculate=reCalculate, logNormal=logNormal)
+
+	topicOrderVec = smh_TopicsOrder(filePrefix, topTopicWords=topTopicWords)
+
+	newSMHvectors = {}
+
+	filterIndexes = topicOrderVec[:topicN]
+
+	for key, vecVal in smhVectors.items():
+		vec = np.asarray(vecVal)
+		newSMHvectors[key] = vec[filterIndexes]
+
+	return newSMHvectors
+
+
+
+
+def smh_TopicsOrder(filePrefix, topTopicWords = 10):
+
+	extension = getSMHextension()
+
+	if os.path.exists(filePrefix + '.topicsOrder' + extension) and (not reCalculate) :
+		return tools.loadPickle(filePrefix + '.topicsOrder' + extension)
+
+	if not os.path.exists(filePrefix + '.topicsRaw' + extension) and (not reCalculate) :
+		smh_get_model(filePrefix)
 	
+	model = tools.loadPickle(filePrefix + '.topicsRaw' + extension)
+
+	smh_sort_Model_topicsIds( filePrefix, model, topTopicWords = topTopicWords)
+
+	return tools.loadPickle(filePrefix + '.topicsOrder' + extension)
+
+
+	
+
+
 def smh_get_embeddings( filePrefix, reCalculate=False, logNormal=False):
 	print '*** smh_get_embeddings ***'
 
@@ -259,7 +298,7 @@ def smh_get_model( filePrefix):
 	corpus = smh.listdb_load(corpusFile)
 	ifs = smh.listdb_load(ifsFile)
 	print 'Loaded .ref and .ifs'
-	discoverer = smh.SMHDiscoverer( tuple_size=a.TUPLE_SIZE, cooccurrence_threshold=a.COOCURRENCE_THRESHOLDS, overlap=a.OVERLAP)
+	discoverer = smh.SMHDiscoverer( tuple_size=a.TUPLE_SIZE, cooccurrence_threshold=a.COOCURRENCE_THRESHOLDS, overlap=a.OVERLAP, min_cluster_size=a.MIN_CLUSTER_SIZE)
                  
 
 	# threshold 0.02, 0.04, 0.06
@@ -272,6 +311,48 @@ def smh_get_model( filePrefix):
 	extension = getSMHextension()
 	models.save(filePrefix + '.topicsRaw' + extension)
 	print "SMH Model saved (a ldb with lists of topics' tokens)"
+
+
+
+def smh_sort_Model_topicsIds( filePrefix, model, topTopicWords = 10):
+    """
+    Sorts topics based on scores
+    Scores are calculated taking the average of their top '_topTopicWords_' most frequent words
+    
+    Returns numpy array
+    """
+    print "Sorting SMH model topics with first _{}_ most frequent words on topic.".format(topTopicWords)
+
+    topic_scores = np.zeros(model.ldb.size)
+
+
+    for topicId, topicLDB in enumerate(model.ldb):
+    	# for each topic in the model we create a 'topicFreqs' vector with all the word frequencies
+
+    	topicFreqs = [0 for x in range(topicLDB.size)]
+    	for itemId, itemInLDB in enumerate(topicLDB):
+    		freq = itemInLDB.freq
+    		topicFreqs[itemId] = freq
+
+    	topicFreqs.sort(reverse=True)
+
+    	# We get the first '_topTopicWords_' words most comon in topic and average their frequency
+        if topTopicWords:
+            if len(topicFreqs) >= topTopicWords:
+                topic_scores[topicId] = np.mean(topicFreqs[:topTopicWords])
+        else:
+            topic_scores[i] = np.mean(topicFreqs)
+
+
+    # We order TopicIds acording to their score
+    topic_indices = np.argsort(topic_scores)[::-1]
+    # Save TopicIds order
+    extension = getSMHextension()
+    fileName = filePrefix + '.topicsOrder' + extension
+    tools.dumpPickle(fileName,topic_indices)
+
+    print "Finished Sorting and saved topics order."
+
 
 
 # All preparations needed to use SMH, are done in the script prepare_db.sh
@@ -498,8 +579,10 @@ def word_avg_from_topics_w2v(filePrefix, corpus, reCalculate=False):
 # Usefull functions
 
 
-def getSMHextension():
-	extension = '[mTupS_{}][coo_{}][ovlp_{}]'.format(a.TUPLE_SIZE, a.COOCURRENCE_THRESHOLDS, a.OVERLAP)
+def getSMHextension(embType=''):
+	extension = '[mTupS_{}][coo_{}][ovlp_{}][mClustS_{}]'.format(a.TUPLE_SIZE, a.COOCURRENCE_THRESHOLDS, a.OVERLAP, a.MIN_CLUSTER_SIZE)
+	if 'smh_reduced' in embType:
+		extension += '[topicN_{}]'.format(a.TOPIC_N)
 	return extension
 
 
