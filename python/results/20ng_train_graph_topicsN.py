@@ -1,5 +1,5 @@
-import train
-import results.values as v
+import python.train
+import python.results.values as v
 
 
 x_values = v.x_values
