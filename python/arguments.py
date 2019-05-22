@@ -19,7 +19,7 @@ WINDOW_SIZE = 5
 
 
 TUPLE_SIZE = 3 # This is r.
-COOCURRENCE_THRESHOLDS = 0.02 # 0.3
+COOCURRENCE_THRESHOLDS = 0.02 # 0.03
 OVERLAP = 0.9
 MIN_CLUSTER_SIZE = 5 # 10
 
@@ -34,8 +34,10 @@ def preMain(aaaargs=[]):
 	USAGE:
 	In python environment:
 
+	import arguments
 	import train
-	args = train.preMain(["-e", "w2v", "-c", "20ng"])
+	args = arguments.preMain(["-e", "w2v", "-c", "20ng"])
+	train.main(args)
 	"""
 
 	parser = argparse.ArgumentParser()

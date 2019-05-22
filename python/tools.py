@@ -17,3 +17,4 @@ def loadPickle(fileName):
 	return dic
 
 
+k = 100

@@ -2,16 +2,18 @@ import matplotlib.pyplot as plt
 import numpy as np
 import python.results.values as v
 import python.tools as tools
+import os
+
+
 
 fileName = v.fileName
-
 
 
 
 # with open(fileName, 'r') as file:
 
 def jbkabvk:
-	''' Aquí creamos la lista de los archivos Pickle History ... donde se 
+	''' Aqu creamos la lista de los archivos Pickle History ... donde se 
 	encuentra la historia de entrenamiento de los modelos que queremos '''
 
 

@@ -63,7 +63,8 @@ def smh_TopicsOrder(filePrefix, topTopicWords = 10):
 	if not os.path.exists(filePrefix + '.topicsRaw' + extension) and (not reCalculate) :
 		smh_get_model(filePrefix)
 	
-	model = tools.loadPickle(filePrefix + '.topicsRaw' + extension)
+	topicsRawPath = getFileExtension( filePrefix, '.topicsRaw' + extension)
+	model = smh.listdb_load(topicsRawPath)
 
 	smh_sort_Model_topicsIds( filePrefix, model, topTopicWords = topTopicWords)
 
