@@ -1,4 +1,4 @@
-import python.train
+import python.train as train
 import python.arguments as arguments
 import python.results.values as v
 
