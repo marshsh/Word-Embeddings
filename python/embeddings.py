@@ -580,10 +580,18 @@ def word_avg_from_topics_w2v(filePrefix, corpus, reCalculate=False):
 # Usefull functions
 
 
-def getSMHextension(embType=''):
-	extension = '[mTupS_{}][coo_{}][ovlp_{}][mClustS_{}]'.format(a.TUPLE_SIZE, a.COOCURRENCE_THRESHOLDS, a.OVERLAP, a.MIN_CLUSTER_SIZE)
-	if 'smh_reduced' in embType:
-		extension += '[topicN_{}]'.format(a.TOPIC_N)
+def getSMHextension(embType='', tupSize=None, coo=None, overlap=None, minClustS=None, topicN=None):
+
+	tupSize = tupSize or a.TUPLE_SIZE
+	coo = coo or a.COOCURRENCE_THRESHOLDS
+	overlap = overlap or a.OVERLAP
+	minClustS = minClustS or a.MIN_CLUSTER_SIZE
+	topicN_val = topicN or a.TOPIC_N
+
+	extension = '[mTupS_{}][coo_{}][ovlp_{}][mClustS_{}]'.format(tupSize,coo,overlap,minClustS)
+	
+	if topicN or 'smh_reduced' in embType:
+		extension += '[topicN_{}]'.format(topicN_val)
 	return extension
 
 
