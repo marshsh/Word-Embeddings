@@ -38,7 +38,7 @@ def smh_reduced_topicN( filePrefix, topicN=1000, topTopicWords=10, reCalculate=F
 
 	smhVectors = smh_get_embeddings( filePrefix, reCalculate=reCalculate, logNormal=logNormal)
 
-	topicOrderVec = smh_TopicsOrder(filePrefix, topTopicWords=topTopicWords)
+	topicOrderVec = smh_TopicsOrder(filePrefix, topTopicWords=topTopicWords, reCalculate=reCalculate)
 
 	newSMHvectors = {}
 
@@ -53,7 +53,7 @@ def smh_reduced_topicN( filePrefix, topicN=1000, topTopicWords=10, reCalculate=F
 
 
 
-def smh_TopicsOrder(filePrefix, topTopicWords = 10):
+def smh_TopicsOrder(filePrefix, topTopicWords = 10, reCalculate=False):
 
 	extension = getSMHextension()
 
