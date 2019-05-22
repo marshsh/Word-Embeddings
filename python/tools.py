@@ -1,3 +1,5 @@
+import corpus
+
 import os
 import pickle
 
