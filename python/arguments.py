@@ -139,8 +139,8 @@ def preMain(aaaargs=[]):
 			TUPLE_SIZE = args.tupleS
 		
 	if args.coo_threshold :
-		global COOCURRENCE_THRESHOLS
-		COOCURRENCE_THRESHOLS = args.coo_threshold
+		global COOCURRENCE_THRESHOLDS
+		COOCURRENCE_THRESHOLDS = args.coo_threshold
 
 	if args.overlap :
 		global OVERLAP
@@ -150,6 +150,7 @@ def preMain(aaaargs=[]):
 	if args.topicN :
 		print "\n ... Since you chose to use 'args.topicN' the embedding type used will be SMH_reduced \n"
 		args.embedding_type = 'smh_reduced'
+		global TOPIC_N
 		TOPIC_N = args.topicN
 
 
