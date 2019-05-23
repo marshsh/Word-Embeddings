@@ -11,7 +11,7 @@ def main(args2):
 	print " Training SMH reduced to  _topicN_  topics with the following values : \n {} \n ".format(str(topic_N_s))
 
 	for topicN in topic_N_s:
-		args = arguments.preMain(["-e", "smh", "-tN", str(topicN), "-tS", str(args2.tS), "-coo", str(args2.coo)], "--overlap", str(args2.ov))
+		args = arguments.preMain(["-e", "smh", "-tN", str(topicN), "-tS", str(args2.tupleSize), "-coo", str(args2.coo)], "--overlap", str(args2.overlap))
 		train.main(args)
 
 
