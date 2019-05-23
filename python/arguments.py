@@ -23,8 +23,12 @@ COOCURRENCE_THRESHOLDS = 0.02 # 0.03
 OVERLAP = 0.9
 MIN_CLUSTER_SIZE = 5 # 10
 
+CLUSTER_TABLE_SIZE = 2**21
+
+
 TOPIC_N = 0 # It will be set in arguments
 TOP_TOPIC_WORDS = 10
+
 
 def preMain(aaaargs=[]):
 	"""

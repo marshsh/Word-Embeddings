@@ -299,7 +299,7 @@ def smh_get_model( filePrefix):
 	corpus = smh.listdb_load(corpusFile)
 	ifs = smh.listdb_load(ifsFile)
 	print 'Loaded .ref and .ifs'
-	discoverer = smh.SMHDiscoverer( tuple_size=a.TUPLE_SIZE, cluster_table_size = 2**23, cooccurrence_threshold=a.COOCURRENCE_THRESHOLDS, overlap=a.OVERLAP, min_cluster_size=a.MIN_CLUSTER_SIZE)
+	discoverer = smh.SMHDiscoverer( tuple_size=a.TUPLE_SIZE, cluster_table_size = a.CLUSTER_TABLE_SIZE, cooccurrence_threshold=a.COOCURRENCE_THRESHOLDS, overlap=a.OVERLAP, min_cluster_size=a.MIN_CLUSTER_SIZE)
                  
 
 	# threshold 0.02, 0.04, 0.06
