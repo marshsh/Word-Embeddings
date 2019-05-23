@@ -27,7 +27,7 @@ def preMain():
 
 	parser.add_argument( "--coo", "-coo", default=arguments.COOCURRENCE_THRESHOLDS, type=float, help="COOCURRENCE_THRESHOLDS")
 
-	parser.add_argument( "--tupleSize", "-tS", default=arguments.TUPLE_SIZE, type=float, help="TUPLE_SIZE")
+	parser.add_argument( "--tupleSize", "-tS", default=arguments.TUPLE_SIZE, type=int, help="TUPLE_SIZE")
 
 	parser.add_argument( "--overlap", "-ov", default=arguments.OVERLAP, type=float, help="OVERLAP")
 
