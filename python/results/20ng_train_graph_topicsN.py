@@ -6,7 +6,9 @@ import argparse
 
 def main(args2):
 
-	topic_N_s = [args2.start : args2.end+1 : args2.step]
+	topic_N_s = [x for x in range(args2.start, args2.end, : args2.step)]
+
+	print " Training SMH reduced to  _topicN_  topics with the following values : \n {} \n ".format(str(topic_N_s))
 
 	for topicN in topic_N_s:
 		args = arguments.preMain(["-e", "smh", "-tN", str(topicN), "-tS", str(args2.tS), "-coo", str(args2.coo)], "--overlap", str(args2.ov))
