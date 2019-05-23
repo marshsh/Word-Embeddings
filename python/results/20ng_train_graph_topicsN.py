@@ -6,7 +6,7 @@ import argparse
 
 def main(args2):
 
-	topic_N_s = [x for x in range(args2.start, args2.end, : args2.step)]
+	topic_N_s = [x for x in range(args2.start, args2.end, args2.step)]
 
 	print " Training SMH reduced to  _topicN_  topics with the following values : \n {} \n ".format(str(topic_N_s))
 
