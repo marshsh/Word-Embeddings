@@ -166,8 +166,6 @@ class corpus:
 
 
 
-
-
 class Stream(Iterator):
     def __init__(self, data):
         self.stop = data.shape[0]
@@ -179,9 +177,9 @@ class Stream(Iterator):
 # 
     def next(self):
         if self.i < self.stop:
-            for vec in self.data:
-                sentence = [str(x) for x in vec if x != 0]
-                self.i += 1
+            vec = self.data[self.i]
+            sentence = [str(x) for x in vec if x != 0]
+            self.i += 1
             return sentence
         else:
             self.i = 0
@@ -221,3 +219,12 @@ def getCorpus(nameC, extraName='',
                  )
         print "Corpus constructed and saved"
         return corpusA
+
+
+
+
+
+
+
+
+
