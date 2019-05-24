@@ -10,9 +10,6 @@ import arguments as a
 
 
 
-lda = LdaModel(it,num_topics=embSize)
-
-
 def lda_embeddings(corpusName, num_topics=None, epochsN=None, reCalculate=False):
 
 
