@@ -53,7 +53,7 @@ def preMain(aaaargs=[]):
 	parser.add_argument("--embedding_type", "-et", "-e", 
 						choices=['smh', 'oneH', 'w2v', 'glove', 'contextVec', 'topicAvg', 
 						'w2v+smh', 'w2v+contextVec', 'glove+contextVec', 'w2v+topicAvg', 
-						'w2v+context', 'gensim'   ], 
+						'w2v+context', 'gensim', 'lda'   ], 
 						help="Type of word representation used to train the model.")
 
 	parser.add_argument("--corpus", "-c", 
@@ -91,10 +91,10 @@ def preMain(aaaargs=[]):
 
 
 
-# W2V Gensim Parameter
+# W2V Gensim and LDA Parameters
 	parser.add_argument("--epochsN","-ep", type=int, default=5 )
 
-	parser.add_argument("--embSize", "-eS", type=int)
+	parser.add_argument("--embSize", "-eS", type=int, default=300)
 
 
 

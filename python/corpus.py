@@ -165,6 +165,18 @@ class corpus:
         return itera
 
 
+    def LDA_stream_x_train(self):
+        itera = StreamLDA(self.x_train)
+        return itera
+
+    def LDA_stream_x_test(self):
+        itera = StreamLDA(self.x_test)
+        return itera
+
+
+
+
+
 
 class Stream(Iterator):
     def __init__(self, data):
@@ -188,6 +200,39 @@ class Stream(Iterator):
     __next__ = next # Python 3 compatibility
 
 
+class StreamLDA(Iterator):
+    def __init__(self, data):
+        self.stop = data.shape[0]
+        self.data = data
+        self.i = 0
+# 
+    def __iter__(self):
+        return self
+# 
+    def next(self):
+        if self.i < self.stop:
+            vec = self.data[self.i]
+            sentence = [int(x) for x in vec if x != 0]
+            bow = BOW(sentence)
+            self.i += 1
+            return bow
+        else:
+            self.i = 0
+            raise StopIteration
+# 
+    __next__ = next # Python 3 compatibility
+
+
+
+def BOW(sentence):
+    dic = {}
+    for word in sentence:
+        if word in dic:
+            dic[word] += 1
+        else :
+            dic[word] = 1
+    r = list(dic.items())
+    return r
 
 
 
