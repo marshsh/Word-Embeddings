@@ -94,7 +94,9 @@ def getEmbeddingLayer(args, embedding_type, corpus, MAX_NUM_WORDS=20000, EMBEDDI
     elif embedding_type == 'smh_reduced_logN':
         embeddings_dic = embeddings.smh_reduced_topicN( args.filePrefix, topicN=args.topicN, topTopicWords=a.TOP_TOPIC_WORDS, reCalculate=args.reCalculate, logNormal=True)
     elif embedding_type == 'lda':
-        embeddings_dic = embeddingLDA.lda_embeddings( args.filePrefix, topicN=args.topicN, topTopicWords=a.TOP_TOPIC_WORDS, reCalculate=args.reCalculate, logNormal=True)
+        embeddings_dic = embeddingLDA.lda_embeddings(args.corpus, num_topics=args.embSize, epochsN=args.epochsN, reCalculate=args.reCalculate)
+
+
 
 
     elif embedding_type == 'oneH':
