@@ -264,10 +264,10 @@ def getCorpus(nameC, extraName='',
     else :
         print "Constructing corpus {}".format(nameC)
         corpusA = corpus(nameC, fileN,
-                 MAX_NUM_WORDS = 20000,
-                 MAX_SEQUENCE_LENGTH = 1000,
-                 num_valid = 0.2,
-                 num_test = 0.18
+                 MAX_NUM_WORDS = MAX_NUM_WORDS,
+                 MAX_SEQUENCE_LENGTH = MAX_SEQUENCE_LENGTH,
+                 num_valid = num_valid,
+                 num_test = num_test
                  )
         print "Corpus constructed and saved"
         return corpusA
