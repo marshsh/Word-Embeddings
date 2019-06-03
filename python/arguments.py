@@ -78,6 +78,11 @@ def preMain(aaaargs=[]):
 
 
 
+	parser.add_argument("--seqLen", "-sL", default=100, type=int)
+
+
+
+
 
 
 # SMH Parameters
@@ -150,6 +155,11 @@ def preMain(aaaargs=[]):
 		global OVERLAP
 		OVERLAP = args.overlap
 
+	# Sequence Length
+	if args.seqLen :
+		global MAX_SEQUENCE_LENGTH
+		MAX_SEQUENCE_LENGTH = args.seqLen
+
 	# Reduced topic numbers
 	if args.topicN :
 		print "\n ... Since you chose to use 'args.topicN' the embedding type used will be SMH_reduced \n"
@@ -203,6 +213,7 @@ def preMain(aaaargs=[]):
 		args.nameBoard = ''
 	else :
 		args.nameBoard =  '(' + args.nameBoard + ')'
+	args.nameBoard += '(SeqLen_{})'.format(MAX_SEQUENCE_LENGTH)
 
 
 	# Adding SMH minTuppleSize and coocurringThreshold
