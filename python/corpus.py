@@ -116,6 +116,7 @@ class corpus:
         tokenizer.fit_on_texts(self.texts)
         self.tokenizer = tokenizer
         self.word_index = tokenizer.word_index
+        self.inv_index = {v: k for k, v in tokenizer.word_index.items()}
 
         sequences = tokenizer.texts_to_sequences(self.texts)
         print 'Found %s unique tokens.' % len(self.word_index)

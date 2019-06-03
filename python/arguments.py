@@ -8,7 +8,7 @@ import os
 EPOCHS = 30
 
 
-MAX_SEQUENCE_LENGTH = 1000
+MAX_SEQUENCE_LENGTH = 100
 MAX_NUM_WORDS = 20000
 EMBEDDING_DIM = 100
 
@@ -18,10 +18,10 @@ TEST_SPLIT = 0.18
 WINDOW_SIZE = 5
 
 
-TUPLE_SIZE = 3 # This is r.
+TUPLE_SIZE = 2 # This is r...   2 o 3
 COOCURRENCE_THRESHOLDS = 0.02 # 0.03
 OVERLAP = 0.9
-MIN_CLUSTER_SIZE = 5 # 10
+MIN_CLUSTER_SIZE = 10 # 5 o 10
 
 CLUSTER_TABLE_SIZE = 2**21
 
@@ -87,7 +87,7 @@ def preMain(aaaargs=[]):
 
 	parser.add_argument("--overlap", "-cv", type=float)
 
-	parser.add_argument("--topicN", "-tN", type=int, help="Reduces SMH embeddings to the size given, taking first topicN topics with more relevance")
+	parser.add_argument("--topicN", "-tN", type=int, default = 9000, help="Reduces SMH embeddings to the size given, taking first topicN topics with more relevance")
 
 
 
