@@ -60,6 +60,8 @@ class corpus:
 
         self.split_data(num_valid, num_test)
 
+        # fileN is defined in getCorpus() at the end of this file
+
         tools.dumpPickle(fileN, self)
 
 
@@ -82,7 +84,7 @@ class corpus:
     def load20NG(self):
         print 'Download 20NewsGroups from SciKitLearn'
         newsgroups_dataset = fetch_20newsgroups(subset = 'all',
-                                                remove = ('headers','footers', 'quotes'))
+                                                ) # remove = ['headers','footers', 'quotes']
         print 'Saving texts into lists'
         texts = newsgroups_dataset.data  # list of text samples
         labels = newsgroups_dataset.target.tolist() # actual labels of the corresponding text
@@ -246,7 +248,11 @@ def getCorpus(nameC, extraName='',
                  reCalculate = False
                  ):
 
-    fileName = nameC + extraName + ".ready"
+
+    extraName = '[SeqLen_{}]'.format(MAX_SEQUENCE_LENGTH)
+
+
+    fileName = nameC + "." + extraName + ".ready"
     fileN = os.path.join("data",nameC,fileName)
 
     if (not reCalculate) & os.path.exists(fileN):
