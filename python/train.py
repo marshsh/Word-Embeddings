@@ -115,7 +115,7 @@ def getEmbeddingLayer(args, embedding_type, corpus, MAX_NUM_WORDS=20000, EMBEDDI
     print 'Preparing embedding matrix. Using ', embedding_type ,' embedding dictionary.'
     # prepare embedding matrix
     num_words = min(MAX_NUM_WORDS, len(corpus.word_index)) + 1
-    embedding_matrix = np.zeros((num_words, EMBEDDING_DIM))
+    embedding_matrix = np.random.normal((num_words, EMBEDDING_DIM))
 
     for word, i in corpus.word_index.items():
         if i > MAX_NUM_WORDS:
@@ -139,13 +139,13 @@ def getEmbeddingLayer(args, embedding_type, corpus, MAX_NUM_WORDS=20000, EMBEDDI
 
 
 
-def getWordsModel(model_type, embedding_layer, numLabels, MAX_SEQUENCE_LENGTH, incomplete):
+def getWordsModel(args, model_type, embedding_layer, numLabels, MAX_SEQUENCE_LENGTH, incomplete):
     if model_type == "conv":
         model = km.getConvModel(embedding_layer, numLabels, MAX_SEQUENCE_LENGTH=a.MAX_SEQUENCE_LENGTH, incomplete=incomplete)
     if model_type == "conv+lstm":
         model = km.getConvLSTMmodel(embedding_layer, numLabels, MAX_SEQUENCE_LENGTH=a.MAX_SEQUENCE_LENGTH, incomplete=incomplete)
     if model_type == "lstm":
-        model = km.getLSTMmodel(embedding_layer, numLabels, MAX_SEQUENCE_LENGTH=a.MAX_SEQUENCE_LENGTH, incomplete=incomplete)
+        model = km.getLSTMmodel(embedding_layer, numLabels, lstmN=args.lstmNeurons, MAX_SEQUENCE_LENGTH=a.MAX_SEQUENCE_LENGTH, incomplete=incomplete)
 
     return model
 
@@ -175,7 +175,7 @@ def main(args):
 # ones intended for document embeddings.
         if args.layout == 'words' :
             embedding_layer = getEmbeddingLayer(args, args.embedding_type, corpusA, a.MAX_NUM_WORDS, a.EMBEDDING_DIM)
-            model = getWordsModel(args.kerasModel, embedding_layer, numLabels, a.MAX_SEQUENCE_LENGTH, incomplete=False)
+            model = getWordsModel(args, args.kerasModel, embedding_layer, numLabels, a.MAX_SEQUENCE_LENGTH, incomplete=False)
         elif args.layout == 'docs' :
             model = docsKM.getDocsModel(args, corpusA, args.kerasModel, numLabels, a.MAX_SEQUENCE_LENGTH, a.MAX_NUM_WORDS, a.EMBEDDING_DIM)
 

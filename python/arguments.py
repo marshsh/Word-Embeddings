@@ -63,7 +63,7 @@ def preMain(aaaargs=[]):
 
 	parser.add_argument("--kerasModel", "-km", "-model", "-keras", 
 						choices=['conv', 'lstm', 'conv+lstm'],
-						default='conv+lstm',
+						default='lstm',
 						help="Architecture of the neural network used to classify texts")
 
 	

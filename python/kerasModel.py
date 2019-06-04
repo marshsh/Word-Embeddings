@@ -61,7 +61,9 @@ def getLSTMmodel(embedding_layer, numLabels,  lstmN=128, MAX_SEQUENCE_LENGTH=100
     model = Sequential()
     model.add(embedding_layer)
     # model.add(Embedding(max_features, 128))
-    model.add(LSTM(lstmN, dropout=0.2, recurrent_dropout=0.2))
+    # model.add(LSTM(lstmN, dropout=0.2, recurrent_dropout=0.2))
+
+    model.add(LSTM(lstmN))
 
     if incomplete:
         return model
