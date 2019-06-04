@@ -57,8 +57,8 @@ def smh_TopicsOrder(filePrefix, topTopicWords = 10, reCalculate=False):
 
 	extension = getSMHextension()
 
-	if os.path.exists(filePrefix + '.topicsOrder' + extension) and (not reCalculate) :
-		return tools.loadPickle(filePrefix + '.topicsOrder' + extension)
+	# if os.path.exists(filePrefix + '.topicsOrder' + extension) and (not reCalculate) :
+	# 	return tools.loadPickle(filePrefix + '.topicsOrder' + extension)
 
 	if not os.path.exists(filePrefix + '.topicsRaw' + extension) and (not reCalculate) :
 		smh_get_model(filePrefix)
