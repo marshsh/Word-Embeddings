@@ -115,7 +115,16 @@ def getEmbeddingLayer(args, embedding_type, corpus, MAX_NUM_WORDS=20000, EMBEDDI
     print 'Preparing embedding matrix. Using ', embedding_type ,' embedding dictionary.'
     # prepare embedding matrix
     num_words = min(MAX_NUM_WORDS, len(corpus.word_index)) + 1
-    embedding_matrix = np.random.normal((num_words, EMBEDDING_DIM))
+
+
+
+    all_embs = np.stack(embeddings_dic.values())
+    emb_mean = all_embs.mean() # Calculate mean
+    emb_std = all_embs.std() # Calculate standard deviation
+    emb_mean,emb_std
+
+
+    embedding_matrix = np.random.normal( emb_mean, emb_std, (num_words, EMBEDDING_DIM))
 
     for word, i in corpus.word_index.items():
         if i > MAX_NUM_WORDS:
