@@ -4,7 +4,7 @@ import train
 
 
 
-COO = [0.04, 0.06, 0.08, 0.10]
+COO = [0.06, 0.08, 0.10]
 
 
 for coo in COO:
