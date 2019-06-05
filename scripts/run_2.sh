@@ -4,6 +4,9 @@
 #
 
 
+# Faltan (tS 2, coo 0.06, overlap 0.8, minClust 5)
+# Faltan (tS 2, coo 0.04, overlap 0.8, minClust 5)
+
 
 coos='0.04 0.06 0.08 0.10'
 
