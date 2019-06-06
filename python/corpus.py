@@ -84,7 +84,8 @@ class corpus:
     def load20NG(self):
         print 'Download 20NewsGroups from SciKitLearn'
         newsgroups_dataset = fetch_20newsgroups(subset = 'all'
-                                                ) # remove = ['headers','footers', 'quotes']
+                                                remove = ['headers','footers'])
+                                                # remove = ['headers','footers', 'quotes'])
         print 'Saving texts into lists'
         texts = newsgroups_dataset.data  # list of text samples
         labels = newsgroups_dataset.target.tolist() # actual labels of the corresponding text
