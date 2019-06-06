@@ -226,7 +226,7 @@ def main(args):
               batch_size=18,
               epochs=a.EPOCHS,
               validation_data=(corpusA.x_test, corpusA.y_test),
-              callbacks=[tensorboard])
+              callbacks=[tensorboard,checkPoint,earlyStopping])
               # callbacks=[tensorboard])
 
     history_dic = history.history
