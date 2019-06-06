@@ -199,6 +199,7 @@ def main(args):
         write_graph=False, histogram_freq=1, write_grads=True
         )
 
+
     checkPoint = ModelCheckpoint(
         "checkPoints/"+callBackName,
         monitor='val_acc',
@@ -209,15 +210,15 @@ def main(args):
         period=1
         )
 
-        # earlyStopping = EarlyStopping(
-        #     monitor='val_acc',
-        #     min_delta=0,
-        #     patience=15,
-        #     verbose=0,
-        #     mode='auto',
-        #     baseline=None,
-        #     restore_best_weights=False
-        #     )
+    earlyStopping = EarlyStopping(
+        monitor='val_acc',
+        min_delta=0.002,
+        patience=8,
+        verbose=0,
+        mode='auto',
+        baseline=None,
+        restore_best_weights=False
+        )
 
 
     print 'Training model.'
