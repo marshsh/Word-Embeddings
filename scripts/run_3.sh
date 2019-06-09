@@ -22,16 +22,9 @@ print_space () {
 
 print_space
 
-python ./python/train.py -e smh -tN 7000 -tS 3 -coo 0.35 --overlap 0.8 --nameBoard 'yaya'
 
-print_space
-
-python ./python/train.py -e smh -tN 7000 -tS 3 -coo 0.45 --overlap 0.8 --nameBoard 'yaya'
-
-print_space
-
-
-coos='0.25 0.3 0.35 0.4 0.45 0.5 0.55 0.6'
+# coos='0.25 0.3 0.35 0.4 0.45 0.5 0.55 0.6'
+coos='0.4 0.5 0.6'
 
 for coo in $coos
 do
