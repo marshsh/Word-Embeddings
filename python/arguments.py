@@ -92,7 +92,7 @@ def preMain(aaaargs=[]):
 
 	parser.add_argument("--overlap", "-cv", type=float)
 
-	parser.add_argument("--topicN", "-tN", type=int, default = 9000, help="Reduces SMH embeddings to the size given, taking first topicN topics with more relevance")
+	parser.add_argument("--topicN", "-tN", type=int, help="Reduces SMH embeddings to the size given, taking first topicN topics with more relevance")
 
 
 
@@ -218,7 +218,7 @@ def preMain(aaaargs=[]):
 
 	# Adding SMH minTuppleSize and coocurringThreshold
 	lista = ['smh', 'context', 'smh_reduced']
-	if bool(sum(map( lambda x: x in args.embedding_type, lista))):
+	if args.embedding_type and bool(sum(map( lambda x: x in args.embedding_type, lista))):
 		from embeddings import getSMHextension 
 		smhName = getSMHextension(embType=args.embedding_type)
 		args.nameBoard = smhName + args.nameBoard

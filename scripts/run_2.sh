@@ -8,11 +8,11 @@
 # Faltan (tS 2, coo 0.04, overlap 0.8, minClust 5)
 
 
-coos='0.02 0.04 0.06 0.08 0.10'
+coos='0.4 0.5 0.6 0.7'
 
 for coo in $coos
 do
-	python ./python/train.py --reCalculate -e smh -tN 7000 -tS 2 -coo $coo --overlap 0.8 --nameBoard 'yaa'
+	python ./python/train.py --reCalculate -e smh -tN 7000 -tS 2 -coo $coo --overlap 0.8 --nameBoard 'yaya'
 
 	echo
 	echo
@@ -28,11 +28,26 @@ do
 done
 
 
-coos='0.04 0.06 0.08 0.10'
+python ./python/train.py --reCalculate -e glove --nameBoard 'yaya'
+
+echo
+echo
+echo
+echo
+echo '********************************************'
+echo Next experiments
+echo '********************************************'
+echo
+echo
+echo
+echo
+
+
+coos='0.1 0.2 0.3 0.4 0.5 0.6 0.7'
 
 for coo in $coos
 do
-	python ./python/train.py --reCalculate -e smh -tN 7000 -tS 3 -coo $coo --overlap 0.8 --nameBoard 'yaa'
+	python ./python/train.py --reCalculate -e smh -tN 7000 -tS 3 -coo $coo --overlap 0.8 --nameBoard 'yaya'
 	echo
 	echo
 	echo
