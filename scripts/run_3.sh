@@ -10,7 +10,7 @@ print_space () {
 	echo
 	echo
 	echo '********************************************'
-	echo Next experiments
+	echo Next experiment
 	echo '********************************************'
 	echo
 	echo
@@ -29,6 +29,8 @@ coos='0.4 0.5 0.6'
 for coo in $coos
 do
 	python ./python/train.py -e smh -tN 7000 -tS 4 -coo $coo --overlap 0.8 --nameBoard 'yaya'
+
+	print_space
 
 done
 

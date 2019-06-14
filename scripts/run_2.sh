@@ -28,7 +28,7 @@ do
 done
 
 
-python ./python/train.py --reCalculate -e glove --nameBoard 'yaya'
+python ./python/train.py -e glove -km conv -sL 300 #--nameBoard 'yaya'
 
 echo
 echo

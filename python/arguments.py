@@ -38,10 +38,19 @@ def preMain(aaaargs=[]):
 	USAGE:
 	In python environment:
 
-	import arguments
-	import train
-	args = arguments.preMain(["-e", "w2v", "-c", "20ng"])
-	train.main(args)
+import os
+os.chdir('./python')
+import arguments
+import train
+os.chdir('..')
+args = arguments.preMain(["-e", "w2v", "-c", "20ng","--reCalculate"])
+
+corp = train.getCorpus(args)
+a = corp.w2v_iterator()
+
+train.main(args)
+
+
 	"""
 
 	parser = argparse.ArgumentParser()

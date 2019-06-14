@@ -19,10 +19,10 @@ def gensimW2V_embeddings(corpusName, epochsN=5, reCalculate=False):
 
 	corp = corpus.getCorpus(corpusName)
 
-	it = corp.stream_x_train()
+	it = corp.w2v_iterator()
 
 	print "Training gensim word embedings of dimension: {}, in {} epochs.".format(a.EMBEDDING_DIM,epochsN)
-	model = Word2Vec(min_count=1, size=a.EMBEDDING_DIM)
+	model = Word2Vec( it, size=a.EMBEDDING_DIM, min_count=5)
 	model.build_vocab(it)
 	model.train(it, total_examples=model.corpus_count, epochs=epochsN, compute_loss=True)
 

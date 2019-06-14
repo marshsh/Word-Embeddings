@@ -150,7 +150,7 @@ def getEmbeddingLayer(args, embedding_type, corpus, MAX_NUM_WORDS=20000, EMBEDDI
 
 def getWordsModel(args, model_type, embedding_layer, numLabels, MAX_SEQUENCE_LENGTH, incomplete):
     if model_type == "conv":
-        model = km.getConvModel(embedding_layer, numLabels, MAX_SEQUENCE_LENGTH=a.MAX_SEQUENCE_LENGTH, incomplete=incomplete)
+        model = km.getConvModel(embedding_layer, numLabels, MAX_SEQUENCE_LENGTH=a.MAX_SEQUENCE_LENGTH)
     if model_type == "conv+lstm":
         model = km.getConvLSTMmodel(embedding_layer, numLabels, MAX_SEQUENCE_LENGTH=a.MAX_SEQUENCE_LENGTH, incomplete=incomplete)
     if model_type == "lstm":
@@ -160,7 +160,7 @@ def getWordsModel(args, model_type, embedding_layer, numLabels, MAX_SEQUENCE_LEN
 
 
 def getCorpus(args):
-    corpusA = corpus.getCorpus(args.corpus, args.nameCorpus, a.MAX_NUM_WORDS, a.MAX_SEQUENCE_LENGTH, a.VALIDATION_SPLIT, a.TEST_SPLIT, args.reCalculate)
+    corpusA = corpus.getCorpus(args.corpus, args.nameCorpus, MAX_NUM_WORDS = a.MAX_NUM_WORDS, MAX_SEQUENCE_LENGTH = a.MAX_SEQUENCE_LENGTH, num_valid = a.VALIDATION_SPLIT, num_test = a.TEST_SPLIT, reCalculate = args.reCalculate)
     return corpusA
 
 
@@ -217,7 +217,7 @@ def main(args):
         verbose=0,
         mode='auto',
         baseline=None,
-        restore_best_weights=False
+        # restore_best_weights=False
         )
 
 
@@ -226,7 +226,8 @@ def main(args):
               batch_size=18,
               epochs=a.EPOCHS,
               validation_data=(corpusA.x_test, corpusA.y_test),
-              callbacks=[tensorboard,checkPoint,earlyStopping])
+              callbacks=[earlyStopping])
+              # callbacks=[tensorboard,checkPoint,earlyStopping])
               # callbacks=[tensorboard])
 
     history_dic = history.history

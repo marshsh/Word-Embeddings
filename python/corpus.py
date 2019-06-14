@@ -46,6 +46,10 @@ import tools
 import arguments as a
 
 
+import gensim
+from gensim.parsing.preprocessing import strip_non_alphanum
+
+
 class corpus:
     def __init__(self, nameC, fileN, 
                  MAX_NUM_WORDS = 20000,
@@ -54,19 +58,28 @@ class corpus:
                  num_test = 0.18,
                  ):
 
+        self.num_valid = num_valid
+        self.num_test = num_test
+
         self.loadCorpus(nameC)
+
+        self.removeStopWords()
 
         self.tokenise_and_pad(MAX_NUM_WORDS, MAX_SEQUENCE_LENGTH)
 
-        self.split_data(num_valid, num_test)
+        self.split_data()
+
+
+
+        # self.split_raw_data(num_valid, num_test) # With all stopwords (for w2v)
 
         # fileN is defined in getCorpus() at the end of this file
-
-        tools.dumpPickle(fileN, self)
-
+        # tools.dumpPickle(fileN, self)
 
 
+    def __iter__(self):
 
+        print "Not yet" 
 
     def loadCorpus(self, nameC):
 
@@ -87,15 +100,32 @@ class corpus:
                                                 remove = ['headers','footers'])
                                                 # remove = ['headers','footers', 'quotes'])
         print 'Saving texts into lists'
-        texts = newsgroups_dataset.data  # list of text samples
+        textsRaw = newsgroups_dataset.data  # list of text samples
         labels = newsgroups_dataset.target.tolist() # actual labels of the corresponding text
         labels_index = { target:i  for i, target in enumerate(newsgroups_dataset.target_names) }
 
 
-        self.texts = texts
+        self.textsRaw = textsRaw
         self.labels = labels
         self.labels_index = labels_index
         print '20NG texts saved. \n'
+
+
+    def removeStopWords(self):
+        print '\nLoading StopWords'
+        with open('./data/stopwords_english.txt','r') as f:
+            l = f.readlines()
+        
+        self.stopWords = { x.strip('\r\n'):True for x in l }
+
+        print 'Removing StopWords from texts'
+        self.texts = []
+
+        for doc in self.textsRaw:
+            doc = doc.split(' ')
+            newDoc = [x for x in doc if x not in self.stopWords]
+            newDoc = ' '.join(newDoc)
+            self.texts.append(newDoc)
 
 
 
@@ -109,7 +139,7 @@ class corpus:
 
     def tokenise_and_pad(self, MAX_NUM_WORDS, MAX_SEQUENCE_LENGTH):
         """
-        Uses a Tokenizer to index words with numbers, and preerving MAX_NUM_WORDS
+        Uses a Tokenizer to index words with numbers, and preserving MAX_NUM_WORDS
         most common words.
 
         Stores the word_index, and the data (tokenized and paded texts).
@@ -128,11 +158,31 @@ class corpus:
         self.labels = to_categorical(np.asarray(self.labels))
         print 'Tokenizing finished. \n'
 
-    def split_data(self, num_valid, num_test):
+
+
+    def split_data(self):
+
+        x_train, y_train, x_test, y_test, x_val, y_val = \
+            self.aux_split_data(self.data, self.labels)
+
+        self.x_train = x_train
+        self.y_train = y_train
+
+        self.x_test = x_test
+        self.y_test = y_test
+
+        self.x_val = x_val
+        self.y_val = y_val
+
+
+
+    def aux_split_data(self, data, labels):
         """
         Splits data in Train Test and Validation sets.
         We use a random seed to always obtain the same Validation Set.
         """
+        num_valid = self.num_valid
+        num_test = self.num_test
 
 
         np.random.seed(42)
@@ -140,21 +190,64 @@ class corpus:
         indices = np.arange(self.data.shape[0])
         np.random.shuffle(indices)
 
-        data = self.data[indices]
-        labels = self.labels[indices]
+        # data = np.asarray(data)
+        data = data[indices]
+        labels = labels[indices]
         
         num_validation_samples = int(num_valid * data.shape[0])
         num_test_samples = int(num_test * data.shape[0])
 
 
-        self.x_train = data[num_test_samples:-num_validation_samples]
-        self.y_train = labels[num_test_samples:-num_validation_samples]
+        self.train_indices = { x:True for x in indices[num_test_samples:-num_validation_samples]}
 
-        self.x_test = data[:num_test_samples]
-        self.y_test = labels[:num_test_samples]
 
-        self.x_val = data[-num_validation_samples:]
-        self.y_val = labels[-num_validation_samples:]
+        x_train = data[num_test_samples:-num_validation_samples]
+        y_train = labels[num_test_samples:-num_validation_samples]
+
+        x_test = data[:num_test_samples]
+        y_test = labels[:num_test_samples]
+
+        x_val = data[-num_validation_samples:]
+        y_val = labels[-num_validation_samples:]
+
+        return x_train, y_train, x_test, y_test, x_val, y_val
+
+    ################################################################################################
+
+    # def get_w2v_iterator():
+
+
+    def w2v_iterator(self, texts=None, labels=None):
+
+        if not texts:
+            texts = self.textsRaw
+        if not labels:
+            labels = self.labels
+
+        class w2v_documents():
+            SPLIT_SENTENCES = re.compile(u"(?:\n\n)|[.!?:]+")
+
+            def __init__(self, corpusA):
+                print "W2V iterator"
+                self.corpusA = corpusA
+
+            def __iter__(self):
+                for i, doc in enumerate(self.corpusA.textsRaw):
+                    if i in self.corpusA.train_indices:
+                        for sentence in self.SPLIT_SENTENCES.split(doc):
+                            sentence.replace('\n',' ')
+                            sentence = gensim.utils.simple_preprocess(sentence, deacc=True)
+                            yield sentence
+
+        return w2v_documents(self)
+
+
+
+
+    
+
+
+
 
 
 
@@ -189,7 +282,8 @@ class Stream(Iterator):
         self.i = 0
 # 
     def __iter__(self):
-        return self
+        while True:
+            yield self.next()
 # 
     def next(self):
         if self.i < self.stop:
@@ -270,6 +364,9 @@ def getCorpus(nameC, extraName='',
                  num_valid = num_valid,
                  num_test = num_test
                  )
+
+        tools.dumpPickle(fileN, corpusA)
+
         print "Corpus constructed and saved"
         return corpusA
 
