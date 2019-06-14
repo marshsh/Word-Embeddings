@@ -34,6 +34,15 @@ print_space
 
 # done
 
+python ./python/train.py -e gensim --embSize 300 -ep 5 -km lstm
+print_space
+python ./python/train.py -e gensim --embSize 300 -ep 10 -km lstm
+print_space
+python ./python/train.py -e gensim --embSize 300 -ep 50 -km lstm
+print_space
+
+
+
 python ./python/train.py -e smh -tN 7000 -tS 2 -coo 0.3 --overlap 0.8 --nameBoard 'ya_StopWords'
 print_space
 python ./python/train.py -e smh -tN 7000 -tS 3 -coo 0.35 --overlap 0.8 --nameBoard 'ya_StopWords'
