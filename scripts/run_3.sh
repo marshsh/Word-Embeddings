@@ -34,7 +34,7 @@ print_space
 
 # done
 
-python ./python/train.py -e gensim --embSize 300 -ep 5 -km lstm
+python ./python/train.py -e gensim --embSize 300 -ep 5 -km lstm --reCalculate
 print_space
 python ./python/train.py -e gensim --embSize 300 -ep 10 -km lstm
 print_space
