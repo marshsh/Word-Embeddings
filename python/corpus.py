@@ -132,7 +132,7 @@ class corpus:
     def loadReuters(self):
     	(x_train, y_train), (x_test, y_test) = reuters.load_data(test_split = 0.0)
 
-        self.texts = x_train
+        self.textsRaw = x_train
         self.labels = y_train
         self.word_index_reuters = reuters.get_word_index(path="reuters_word_index.json")
 
